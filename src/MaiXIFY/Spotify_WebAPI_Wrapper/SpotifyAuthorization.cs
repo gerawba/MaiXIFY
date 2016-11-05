@@ -36,7 +36,7 @@ namespace MaiXIFY.Spotify_WebAPI_Wrapper
         }
 
 
-        public bool RequestAccessAndRefreshTokens(HttpRequest request)
+        public bool RequestAccessAndRefreshTokens (HttpRequest request)
         {
             string state = request.Query["state"];
             if (state == null) //|| !state.Equals(cookie state))
@@ -51,8 +51,7 @@ namespace MaiXIFY.Spotify_WebAPI_Wrapper
             var client = new HttpClient ();
             client.BaseAddress = new Uri (tokenEndpoint);
 
-            var content = new FormUrlEncodedContent(new[]
-            {
+            var content = new FormUrlEncodedContent (new [] {
                 new KeyValuePair<string, string> ("grant_type", "authorization_code"),
                 new KeyValuePair<string, string> ("code", code),
                 new KeyValuePair<string, string> ("redirect_uri", _spotifyCredentialsSettings.RedirectURI)
@@ -62,10 +61,12 @@ namespace MaiXIFY.Spotify_WebAPI_Wrapper
             byte[] clientCredentialsBytes = System.Text.Encoding.UTF8.GetBytes (clientCredentialsString);
             client.DefaultRequestHeaders.Add ("Authorization", "Basic " + Convert.ToBase64String (clientCredentialsBytes));
 
-            var res = client.PostAsync (tokenEndpoint, content).Result;
+            var response = client.PostAsync (tokenEndpoint, content).Result;
     
-            if (!res.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
                 return false;
+
+            var x = response.Content.ToString();
 
             return true;
         }
