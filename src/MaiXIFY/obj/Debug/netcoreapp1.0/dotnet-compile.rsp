@@ -200,5 +200,7 @@
 D:\dev\MaiXIFY\src\MaiXIFY\Program.cs
 D:\dev\MaiXIFY\src\MaiXIFY\Startup.cs
 D:\dev\MaiXIFY\src\MaiXIFY\Controllers\HomeController.cs
-D:\dev\MaiXIFY\src\MaiXIFY\Spotify WebAPI Wrapper\SpotifyAuthorization.cs
-D:\dev\MaiXIFY\src\MaiXIFY\Spotify WebAPI Wrapper\SpotifyCredentialsSettings.cs
+D:\dev\MaiXIFY\src\MaiXIFY\Controllers\LoginController.cs
+D:\dev\MaiXIFY\src\MaiXIFY\Spotify_WebAPI_Wrapper\ISpotifyAuthorization.cs
+D:\dev\MaiXIFY\src\MaiXIFY\Spotify_WebAPI_Wrapper\SpotifyAuthorization.cs
+D:\dev\MaiXIFY\src\MaiXIFY\Spotify_WebAPI_Wrapper\SpotifyCredentialsSettings.cs

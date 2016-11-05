@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 
 namespace MaiXIFY.Spotify_WebAPI_Wrapper
 {
-    public class SpotifyAuthorization
+    public interface ISpotifyAuthorization
     {
+        string RequestAuthorization (string scope);
     }
 }

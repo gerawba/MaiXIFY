@@ -8,17 +8,9 @@ using Microsoft.Extensions.Options;
 namespace MaiXIFY.Controllers
 {
     public class HomeController : Controller
-    {
-        private Spotify_WebAPI_Wrapper.SpotifyCredentialsSettings _spotifyCredentialsSettings { get; set; }
-
-        public HomeController (IOptions<Spotify_WebAPI_Wrapper.SpotifyCredentialsSettings> spotifyCredentialsSettings)
-        {
-            _spotifyCredentialsSettings = spotifyCredentialsSettings.Value;
-        }
-
+    { 
         public IActionResult Index()
         {
-            var cID = _spotifyCredentialsSettings.ClientId;
             return View();
         }
 
