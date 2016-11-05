@@ -8,21 +8,28 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MaiXIFY.Controllers
 {
-    public class LoginController : Controller
+    public class CallbackController : Controller
     {
         private Spotify_WebAPI_Wrapper.ISpotifyAuthorization _spotifyAuthorization;
 
-        public LoginController(Spotify_WebAPI_Wrapper.ISpotifyAuthorization spotifyAuthorization) 
+        public CallbackController(Spotify_WebAPI_Wrapper.ISpotifyAuthorization spotifyAuthorization)
         {
             _spotifyAuthorization = spotifyAuthorization;
         }
 
+
         // GET: /<controller>/
         public IActionResult Index()
         {
-            string scope = "";
+            _spotifyAuthorization.RequestAccessAndRefreshTokens (HttpContext.Request);
 
-            return Redirect (_spotifyAuthorization.RequestAuthorization (scope));
+            return View();
+        }
+
+
+        public IActionResult Error()
+        {
+            return View();
         }
     }
 }
