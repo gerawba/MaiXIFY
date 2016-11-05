@@ -48,24 +48,22 @@ namespace MaiXIFY.Spotify_WebAPI_Wrapper
             if (code == null)
                 return false;
 
-            var client = new HttpClient();
-            client.BaseAddress = new Uri(tokenEndpoint);
+            var client = new HttpClient ();
+            client.BaseAddress = new Uri (tokenEndpoint);
 
-            JObject body = new JObject();
-            body.Add("grant_type", "authorization_code");
-            body.Add("code", code);
-            body.Add("redirect_uri", _spotifyCredentialsSettings.RedirectURI);
+            var content = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string> ("grant_type", "authorization_code"),
+                new KeyValuePair<string, string> ("code", code),
+                new KeyValuePair<string, string> ("redirect_uri", _spotifyCredentialsSettings.RedirectURI)
+            });
 
             string clientCredentialsString = _spotifyCredentialsSettings.ClientId + ":" + _spotifyCredentialsSettings.ClientSecret;
-            byte[] clientCredentialsBytes = System.Text.Encoding.UTF8.GetBytes(clientCredentialsString);
-            client.DefaultRequestHeaders.Add ("Authorization", "Basic " + Convert.ToBase64String(clientCredentialsBytes));
+            byte[] clientCredentialsBytes = System.Text.Encoding.UTF8.GetBytes (clientCredentialsString);
+            client.DefaultRequestHeaders.Add ("Authorization", "Basic " + Convert.ToBase64String (clientCredentialsBytes));
 
-            var x = new StringContent(JsonConvert.SerializeObject(body), System.Text.Encoding.UTF8, "application/json");
-
-            var res = client.PostAsync(tokenEndpoint, new StringContent(JsonConvert.SerializeObject(body), System.Text.Encoding.UTF8, "application/json")).Result;
-
-            // var response = await client.GetAsync("");
-            
+            var res = client.PostAsync (tokenEndpoint, content).Result;
+    
             if (!res.IsSuccessStatusCode)
                 return false;
 
