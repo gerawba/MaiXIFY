@@ -63,7 +63,7 @@ namespace MaiXIFY.Controllers
             else
                 playlist = _spotifyEndpointAccessor.CreatePlaylist (currentUser.Id, playlistName, isPublic, isCollaborative);
 
-            return View (playlist);
+            return Json (playlist);
         }
 
 
