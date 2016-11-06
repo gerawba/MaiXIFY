@@ -20,6 +20,8 @@ Please select how do you want to add playlists:
         Spotify user name:<br>
         <input id="spotifyUserInput" type="text" name="spotifyUserInput" size="100" value="">
         <button type="button" onclick="getPlaylists()">Get Playlists</button>
+        <br />
+        <br />
     </div>
 </div>
 
@@ -51,7 +53,26 @@ Please select how do you want to add playlists:
             alert('Please add a Spotify User name!')
         }
         else {
-            window.location.href = "Home/GetUserPlaylists?userId=" + spotifyUserName;
+            $.ajax({
+                url: '@Url.Action("GetUserPlaylists")',
+                data: { 'userId': spotifyUserName },
+                type: "post",
+                cache: false,
+                success: function (playlists) {
+                    var usersPlaylists = playlists;
+                    for (i = 0; i < usersPlaylists.length; i++) {
+                        var src = "https://embed.spotify.com/?uri=" + usersPlaylists[i].uri;
+                        var playlistElement = "<div>" + "<p>" + usersPlaylists[i].name + "</p>" +
+                                                "<p>" + usersPlaylists[i].uri + "</p>" +
+                                                '<iframe src=' + "\"" +  src + "\"" + 'width="300" height="380" frameborder="0" allowtransparency="true"></iframe>' +
+                                                "</div>";
+                        $("#spotifyUserForm").append(playlistElement);
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    $('#lblCommentsNotification').text("Error encountered while saving the comments.");
+                }
+            });
         }
     }
 </script>
