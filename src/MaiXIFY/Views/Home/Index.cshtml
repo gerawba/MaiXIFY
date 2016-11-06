@@ -19,6 +19,7 @@ Please select how do you want to add playlists:
     <div id="spotifyUserForm" style="display:none">
         Spotify user name:<br>
         <input id="spotifyUserInput" type="text" name="spotifyUserInput" size="100" value="">
+        <button type="button" onclick="getPlaylists()">Get Playlists</button>
     </div>
 </div>
 
@@ -33,5 +34,15 @@ Please select how do you want to add playlists:
         $('#playlistForm').hide();
         $('#spotifyUserForm').show();
         $('#playlistIDInput').val('');
+    }
+
+    function getPlaylists() {
+        var spotifyUserName = $('#spotifyUserInput').val();
+        if (spotifyUserName.length <= 0) {
+            alert('Please add a Spotify User name!')
+        }
+        else {
+            window.location.href = "Home/SelectPlaylists?userId=" + spotifyUserName;
+        }
     }
 </script>
