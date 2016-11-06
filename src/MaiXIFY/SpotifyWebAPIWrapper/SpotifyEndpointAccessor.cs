@@ -88,7 +88,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
             client.DefaultRequestHeaders.Add ("Authorization", AuthorizationHeader);
             client.DefaultRequestHeaders.Add ("ContentType", "application/json");
 
-            SpotifyHelpers.RequestContentCreate requestContent = new SpotifyHelpers.RequestContentCreate ();
+            SpotifyHelpers.RequestContentCreatePlaylist requestContent = new SpotifyHelpers.RequestContentCreatePlaylist ();
             requestContent.Name = playlistName;
             requestContent.IsPublic = isPublic;
             requestContent.IsCollaborative = isCollaborative;
@@ -100,6 +100,25 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 
             var responseContent = response.Content.ReadAsStringAsync().Result;
             return JsonConvert.DeserializeObject<SpotifyPlaylist> (responseContent);
+        }
+
+
+        public bool AddTrackToPlaylist (string userId, string playlistId, List<string> trackUriList)
+        {
+            var client = new HttpClient();
+
+            client.DefaultRequestHeaders.Add ("Authorization", AuthorizationHeader);
+            client.DefaultRequestHeaders.Add ("ContentType", "application/json");
+
+            SpotifyHelpers.RequestContentAddTrackToPlaylist requestContent = new SpotifyHelpers.RequestContentAddTrackToPlaylist ();
+            requestContent.TrackUriList = trackUriList;
+
+            var response = client.PostAsync (baseUrl + usersUrl + userId + "/playlists/" + playlistId + "/tracks", new StringContent (JsonConvert.SerializeObject(requestContent))).Result;
+
+            if (!response.IsSuccessStatusCode)
+                return false;
+
+            return true;
         }
 
 

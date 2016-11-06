@@ -19,12 +19,14 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
             return embedWidgetSource;
         }
 
+
         public static string MakeWidgetSrc (string playlistUri)
         {
             return "https://embed.spotify.com/?uri=" + playlistUri;
         }
 
-        public class RequestContentCreate
+
+        public class RequestContentCreatePlaylist
         {
             [JsonProperty(PropertyName = "name")]
             public string Name { get; set; }
@@ -34,6 +36,13 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 
             [JsonProperty(PropertyName = "collaborative")]
             public bool IsCollaborative { get; set; }
+        }
+
+
+        public class RequestContentAddTrackToPlaylist
+        {
+            [JsonProperty(PropertyName = "uris")]
+            public List<string> TrackUriList { get; set; }
         }
     }
 }

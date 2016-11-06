@@ -67,6 +67,34 @@ namespace MaiXIFY.Controllers
         }
 
 
+        public IActionResult AddTrackToPlaylist (string playlistId, List<string> trackUriList)
+        {
+            SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist playlist = new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist();
+
+            SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyUser currentUser = _spotifyEndpointAccessor.GetCurrentUserProfile();
+
+            if (trackUriList == null)
+                trackUriList = new List<string> ();
+            
+            // TODO csak a peldaert ezeket majd torolni kell
+            trackUriList.Add("spotify:track:1UbqS1I358tyD3Dz6sEJ4P");
+            trackUriList.Add("spotify:track:7FnaZ2MLfUk8Mt2hSbquAU");
+
+            if (currentUser.Id == null || playlistId == null)
+            {
+                ViewData["Message"] = "Nem adtál meg nevet a létrehozandó playlistedhez!";
+            }
+            else
+            {
+                bool success = _spotifyEndpointAccessor.AddTrackToPlaylist(currentUser.Id, playlistId, trackUriList);
+                if (success)
+                    ViewData["Message"] = "Sikeresen hozzaadtuk a szamokat a playlisthez!";
+            }
+
+            return View ();
+        }
+
+
         public IActionResult About ()
         {
             var spotifyUserProfile = _spotifyEndpointAccessor.GetCurrentUserProfile ();

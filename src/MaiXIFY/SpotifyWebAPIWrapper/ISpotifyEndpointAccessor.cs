@@ -15,5 +15,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         SpotifyPlaylist GetPlaylist (string userId, string playlistId);
 
         SpotifyPlaylist CreatePlaylist (string userId, string playlistName, bool isPublic = true, bool isCollaborative = false);
+
+        bool AddTrackToPlaylist (string userId, string playlistId, List<string> trackUriList);
     }
 }
