@@ -17,7 +17,7 @@ namespace MaiXIFY.Controllers
             _spotifyAuthorization = spotifyAuthorization;
         }
 
-        // GET: /<controller>/
+
         public IActionResult Index ()
         {
             string scope = "playlist-modify-public playlist-modify-private";

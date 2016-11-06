@@ -50,6 +50,13 @@ namespace MaiXIFY.Controllers
         }
 
 
+        public IActionResult SelectPlaylists (List<SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem> selectedPlaylist)
+        {
+            
+            return Json ("Ok");
+        }
+
+
         public IActionResult CreatePlaylist (string playlistName, bool isPublic = true, bool isCollaborative = false)
         {
             SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist playlist = new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist ();

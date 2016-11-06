@@ -30,7 +30,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         {
             var stateCookie = GenerateRandomString (16);
 
-            QueryString queryString = new QueryString();
+            QueryString queryString = new QueryString ();
             queryString = queryString.Add ("client_id", _spotifyCredentialsSettings.ClientId);
             queryString = queryString.Add ("response_type", "code");
             queryString = queryString.Add ("redirect_uri", _spotifyCredentialsSettings.RedirectURI);
@@ -59,7 +59,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
             if (code == null)
                 return false;
 
-            var client = new HttpClient();
+            var client = new HttpClient ();
 
             var requestContent = new FormUrlEncodedContent (new[] {
                 new KeyValuePair<string, string> ("grant_type", "authorization_code"),

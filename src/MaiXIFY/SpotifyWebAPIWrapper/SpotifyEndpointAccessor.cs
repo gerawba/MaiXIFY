@@ -27,8 +27,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 
         public SpotifyUser GetCurrentUserProfile ()
         {
-            var client = new HttpClient ();
-            client.DefaultRequestHeaders.Add ("Authorization", AuthorizationHeader);
+            var client = GetSpotifyHttpClient ();
 
             var response = client.GetAsync (baseUrl + "/v1/me").Result;
 
@@ -36,17 +35,13 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
                 return null;
 
             var responseContent = response.Content.ReadAsStringAsync ().Result;
-            var userProfile = JsonConvert.DeserializeObject<SpotifyUser> (responseContent);
-
-            return userProfile;
+            return JsonConvert.DeserializeObject<SpotifyUser> (responseContent);
         }
 
 
         public List<SpotifyPlaylistSimplified> GetUserPlaylists (string userId)
         {
-            var client = new HttpClient();
-
-            client.DefaultRequestHeaders.Add ("Authorization", AuthorizationHeader);
+            var client = GetSpotifyHttpClient ();
 
             var response = client.GetAsync (baseUrl + usersUrl + userId + "/playlists").Result;
 
@@ -60,7 +55,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 
             List<SpotifyPlaylistSimplified> userPlaylists = new List<SpotifyPlaylistSimplified>();
             for (int i = 0; i < playlistsNumber; ++i)
-                userPlaylists.Add(userPlaylistsPaging.Items[i]);
+                userPlaylists.Add (userPlaylistsPaging.Items[i]);
 
             return userPlaylists;
         }
@@ -68,9 +63,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 
         public SpotifyPlaylist GetPlaylist (string userId, string playlistId)
         {
-            var client = new HttpClient();
-
-            client.DefaultRequestHeaders.Add ("Authorization", AuthorizationHeader);
+            var client = GetSpotifyHttpClient ();
             
             var response = client.GetAsync (baseUrl + usersUrl + userId + "/playlists/" + playlistId).Result;
 
@@ -83,10 +76,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 
         public SpotifyPlaylist CreatePlaylist (string userId, string playlistName, bool isPublic = true, bool isCollaborative = false)
         {
-            var client = new HttpClient ();
-
-            client.DefaultRequestHeaders.Add ("Authorization", AuthorizationHeader);
-            client.DefaultRequestHeaders.Add ("ContentType", "application/json");
+            var client = GetSpotifyHttpClient ();
 
             SpotifyHelpers.RequestContentCreatePlaylist requestContent = new SpotifyHelpers.RequestContentCreatePlaylist ();
             requestContent.Name = playlistName;
@@ -105,10 +95,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 
         public bool AddTrackToPlaylist (string userId, string playlistId, List<string> trackUriList)
         {
-            var client = new HttpClient();
-
-            client.DefaultRequestHeaders.Add ("Authorization", AuthorizationHeader);
-            client.DefaultRequestHeaders.Add ("ContentType", "application/json");
+            var client = GetSpotifyHttpClient ();
 
             SpotifyHelpers.RequestContentAddTrackToPlaylist requestContent = new SpotifyHelpers.RequestContentAddTrackToPlaylist ();
             requestContent.TrackUriList = trackUriList;
@@ -122,5 +109,14 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         }
 
 
+        private static HttpClient GetSpotifyHttpClient ()
+        {
+            var client = new HttpClient ();
+
+            client.DefaultRequestHeaders.Add ("Authorization", AuthorizationHeader);
+            client.DefaultRequestHeaders.Add ("ContentType", "application/json");
+
+            return client;
+        }
     }
 }
