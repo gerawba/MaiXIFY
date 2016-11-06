@@ -24,6 +24,15 @@ Please select how do you want to add playlists:
 </div>
 
 <script>
+    window.onload = function () {
+        onLoadFunction();
+    };
+
+    function onLoadFunction() {
+        $("#playlistID").prop("checked", false);
+        $("#spotifyUser").prop("checked", false);
+    }
+
     function playlistIDModeSelected() {
         $('#playlistForm').show();
         $('#spotifyUserForm').hide();
