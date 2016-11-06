@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace MaiXIFY.SpotifyWebAPIWrapper
 {
     public static class SpotifyHelpers
     {
-        public static string MakeWidgetSrc(string ownerId, string playlistId)
+        public static string MakeWidgetSrc (string ownerId, string playlistId)
         {
             string embedWidgetSource = "https://embed.spotify.com/?uri=spotify";
             embedWidgetSource += ":user:";
@@ -18,9 +19,21 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
             return embedWidgetSource;
         }
 
-        public static string MakeWidgetSrc(string playlistUri)
+        public static string MakeWidgetSrc (string playlistUri)
         {
             return "https://embed.spotify.com/?uri=" + playlistUri;
+        }
+
+        public class RequestContentCreate
+        {
+            [JsonProperty(PropertyName = "name")]
+            public string Name { get; set; }
+
+            [JsonProperty(PropertyName = "public")]
+            public bool IsPublic { get; set; }
+
+            [JsonProperty(PropertyName = "collaborative")]
+            public bool IsCollaborative { get; set; }
         }
     }
 }

@@ -13,5 +13,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         List<SpotifyPlaylistSimplified> GetUserPlaylists (string userId);
 
         SpotifyPlaylist GetPlaylist (string userId, string playlistId);
+
+        SpotifyPlaylist CreatePlaylist (string userId, string playlistName, bool isPublic = true, bool isCollaborative = false);
     }
 }

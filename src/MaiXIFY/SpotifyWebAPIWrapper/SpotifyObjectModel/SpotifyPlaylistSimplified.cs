@@ -23,6 +23,9 @@ namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
         [JsonProperty(PropertyName = "tracks")]
         public SimplifiedTrack Tracks { get; set; }
 
+        [JsonProperty(PropertyName = "external_urls")]
+        public SpotifyExternalUrl SpotifyExternalUrl { get; set; }
+
         [JsonProperty(PropertyName = "uri")]
         public string Uri { get; set; }
 

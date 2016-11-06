@@ -70,8 +70,8 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         {
             var client = new HttpClient();
 
-            client.DefaultRequestHeaders.Add("Authorization", AuthorizationHeader);
-
+            client.DefaultRequestHeaders.Add ("Authorization", AuthorizationHeader);
+            
             var response = client.GetAsync (baseUrl + usersUrl + userId + "/playlists/" + playlistId).Result;
 
             if (!response.IsSuccessStatusCode)
@@ -80,5 +80,28 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
             var responseContent = response.Content.ReadAsStringAsync().Result;
             return JsonConvert.DeserializeObject<SpotifyPlaylist> (responseContent);
         }
+
+        public SpotifyPlaylist CreatePlaylist (string userId, string playlistName, bool isPublic = true, bool isCollaborative = false)
+        {
+            var client = new HttpClient ();
+
+            client.DefaultRequestHeaders.Add ("Authorization", AuthorizationHeader);
+            client.DefaultRequestHeaders.Add ("ContentType", "application/json");
+
+            SpotifyHelpers.RequestContentCreate requestContent = new SpotifyHelpers.RequestContentCreate ();
+            requestContent.Name = playlistName;
+            requestContent.IsPublic = isPublic;
+            requestContent.IsCollaborative = isCollaborative;
+
+            var response = client.PostAsync (baseUrl + usersUrl + userId + "/playlists", new StringContent(JsonConvert.SerializeObject(requestContent))).Result;
+
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            var responseContent = response.Content.ReadAsStringAsync().Result;
+            return JsonConvert.DeserializeObject<SpotifyPlaylist> (responseContent);
+        }
+
+
     }
 }

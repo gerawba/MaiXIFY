@@ -50,6 +50,23 @@ namespace MaiXIFY.Controllers
         }
 
 
+        public IActionResult CreatePlaylist (string playlistName, bool isPublic = true, bool isCollaborative = false)
+        {
+            SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist playlist = new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist ();
+
+            SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyUser currentUser = _spotifyEndpointAccessor.GetCurrentUserProfile ();
+
+            if (currentUser.Id == null || playlistName == null)
+            {
+                ViewData["Message"] = "Nem adtál meg nevet a létrehozandó playlistedhez!";
+            }
+            else
+                playlist = _spotifyEndpointAccessor.CreatePlaylist (currentUser.Id, playlistName, isPublic, isCollaborative);
+
+            return View (playlist);
+        }
+
+
         public IActionResult About ()
         {
             var spotifyUserProfile = _spotifyEndpointAccessor.GetCurrentUserProfile ();
