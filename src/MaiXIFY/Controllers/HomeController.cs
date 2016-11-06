@@ -22,7 +22,7 @@ namespace MaiXIFY.Controllers
             return View ();
         }
 
-        public IActionResult SelectPlaylists (string userId)
+        public IActionResult GetUserPlaylists (string userId)
         {
             List<SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylistSimplified> playlists = new List<SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylistSimplified>();
 
@@ -31,7 +31,7 @@ namespace MaiXIFY.Controllers
             } else
                 playlists = _spotifyEndpointAccessor.GetUserPlaylists (userId);
 
-            return View (playlists);
+            return Json (playlists);
         }
 
 
@@ -46,7 +46,7 @@ namespace MaiXIFY.Controllers
             else
                 playlist = _spotifyEndpointAccessor.GetPlaylist (userId, playlistId);
 
-            return View (playlist);
+            return Json (playlist);
         }
 
 
