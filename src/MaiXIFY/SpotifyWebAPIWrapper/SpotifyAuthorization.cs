@@ -14,6 +14,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
     public class SpotifyAuthorization : ISpotifyAuthorization
     {
         private SpotifyWebAPIWrapper.SpotifyCredentialsSettings _spotifyCredentialsSettings { get; set; }
+        private const string stateCookieKey = "stateKey";
         private const string authorizeEndpoint = "https://accounts.spotify.com/authorize";
         private const string tokenEndpoint = "https://accounts.spotify.com/api/token";
         public static string AccessToken { get; set; }
@@ -25,32 +26,36 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         }
 
 
-        public string RequestAuthorization(string scope)
+        public string RequestAuthorization (string scope, HttpContext context)
         {
-            QueryString queryString = new QueryString();
-            queryString = queryString.Add("client_id", _spotifyCredentialsSettings.ClientId);
-            queryString = queryString.Add("response_type", "code");
-            queryString = queryString.Add("redirect_uri", _spotifyCredentialsSettings.RedirectURI);
-            queryString = queryString.Add("state", GenerateRandomString(16));
-            queryString = queryString.Add("scope", scope);
+            var stateCookie = GenerateRandomString (16);
 
-            return authorizeEndpoint + queryString.ToUriComponent();
+            QueryString queryString = new QueryString();
+            queryString = queryString.Add ("client_id", _spotifyCredentialsSettings.ClientId);
+            queryString = queryString.Add ("response_type", "code");
+            queryString = queryString.Add ("redirect_uri", _spotifyCredentialsSettings.RedirectURI);
+            queryString = queryString.Add ("state", stateCookie);
+            queryString = queryString.Add ("scope", scope);
+
+            context.Response.Cookies.Append (stateCookieKey, stateCookie);
+
+            return authorizeEndpoint + queryString.ToUriComponent ();
         }
 
 
-        public bool RequestAccessAndRefreshTokens(HttpRequest request)
+        public bool RequestAccessAndRefreshTokens (HttpContext context)
         {
-            string state = request.Query["state"];
-            if (state == null) //|| !state.Equals(cookie state))
+            string state = context.Request.Query["state"];
+            if (state == null || !state.Equals (context.Request.Cookies[stateCookieKey]))
                 return false;
 
-            string error = request.Query["error"];
+            string error = context.Request.Query["error"];
             if (error != null)
                 return false;
 
-            //cookie statekey torles
+            context.Response.Cookies.Delete (stateCookieKey);
 
-            string code = request.Query["code"];
+            string code = context.Request.Query["code"];
             if (code == null)
                 return false;
 

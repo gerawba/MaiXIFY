@@ -16,18 +16,18 @@ namespace MaiXIFY.Controllers
             _spotifyEndpointAccessor = spotifyEndpointAccessor;
         }
 
-        public IActionResult Index()
+        public IActionResult Index ()
         {
-            return View();
+            return View ();
         }
 
-        public IActionResult About()
+        public IActionResult About ()
         {
             var spotifyUserProfile = _spotifyEndpointAccessor.GetCurrentUserProfile ();
             if (spotifyUserProfile == null)
-                ViewBag.Message = "Hiba tortent a GetCurrentProfile lekeresekor";
+                ViewData["Message"] = "Hiba történt a GetCurrentProfile lekérésekor.";
 
-            ViewBag.Message = spotifyUserProfile.DisplayName + spotifyUserProfile.Id;
+            ViewData["Message"] = spotifyUserProfile.DisplayName + spotifyUserProfile.Id;
             return View ();
         }
 

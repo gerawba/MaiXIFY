@@ -18,22 +18,21 @@ namespace MaiXIFY.Controllers
         }
 
 
-        // GET: /<controller>/
         public IActionResult Index ()
         {
-            bool success = _spotifyAuthorization.RequestAccessAndRefreshTokens (HttpContext.Request);
+            bool success = _spotifyAuthorization.RequestAccessAndRefreshTokens (HttpContext);
 
             if (!success)
                 return new RedirectToActionResult ("Error", "Callback", null);
 
-            ViewBag.Message = "Hozzaférés OK";
+            ViewData["Message"] = "Hozzaférés OK";
             return new RedirectToActionResult ("About", "Home", null);
         }
 
 
         public IActionResult Error ()
         {
-            ViewBag.Message = "Hiba történt a CALLBACK hivasakor. Talan nem adtal engedelyt a MaiXIFIY-nak? Netan manualisan kerted le az oldalt, es nem atiranyitottak?";
+            ViewBag.Message = "Hiba történt a CALLBACK hivásakor - ez az oldal csak átirányitás után érhető el. Talén nem adtál engedélyt a MaiXIFIY appnek? Netén manuálisan tévedtél erre a címre?";
             return View ();
         }
     }

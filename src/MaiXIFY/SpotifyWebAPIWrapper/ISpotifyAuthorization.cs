@@ -8,7 +8,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 {
     public interface ISpotifyAuthorization
     {
-        string RequestAuthorization (string scope);
-        bool RequestAccessAndRefreshTokens (HttpRequest request);
+        string RequestAuthorization (string scope, HttpContext context);
+        bool RequestAccessAndRefreshTokens (HttpContext context);
     }
 }

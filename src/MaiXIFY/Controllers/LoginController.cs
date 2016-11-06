@@ -22,7 +22,7 @@ namespace MaiXIFY.Controllers
         {
             string scope = "user-follow-modify streaming";
 
-            return Redirect (_spotifyAuthorization.RequestAuthorization (scope));
+            return Redirect (_spotifyAuthorization.RequestAuthorization (scope, HttpContext));
         }
     }
 }

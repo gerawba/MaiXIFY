@@ -33,7 +33,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
             if (!response.IsSuccessStatusCode)
                 return null;
 
-            var responseContent = response.Content.ReadAsStringAsync().Result;
+            var responseContent = response.Content.ReadAsStringAsync ().Result;
             var userProfile = JsonConvert.DeserializeObject<SpotifyUserProfile> (responseContent);
 
             return userProfile;
