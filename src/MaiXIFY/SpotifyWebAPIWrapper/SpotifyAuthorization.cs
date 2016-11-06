@@ -9,21 +9,23 @@ using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace MaiXIFY.Spotify_WebAPI_Wrapper
+namespace MaiXIFY.SpotifyWebAPIWrapper
 {
     public class SpotifyAuthorization : ISpotifyAuthorization
     {
-        private Spotify_WebAPI_Wrapper.SpotifyCredentialsSettings _spotifyCredentialsSettings { get; set; }
-        private string authorizeEndpoint = "https://accounts.spotify.com/authorize";
-        private string tokenEndpoint = "https://accounts.spotify.com/api/token";
+        private SpotifyWebAPIWrapper.SpotifyCredentialsSettings _spotifyCredentialsSettings { get; set; }
+        private const string authorizeEndpoint = "https://accounts.spotify.com/authorize";
+        private const string tokenEndpoint = "https://accounts.spotify.com/api/token";
+        public static string AccessToken { get; set; }
+        public static string RefreshToken { get; set; }
 
-        public SpotifyAuthorization(IOptions<Spotify_WebAPI_Wrapper.SpotifyCredentialsSettings> spotifyCredentialsSettings)
+        public SpotifyAuthorization (IOptions<SpotifyWebAPIWrapper.SpotifyCredentialsSettings> spotifyCredentialsSettings)
         {
             _spotifyCredentialsSettings = spotifyCredentialsSettings.Value;
         }
 
 
-        public string RequestAuthorization (string scope)
+        public string RequestAuthorization(string scope)
         {
             QueryString queryString = new QueryString();
             queryString = queryString.Add("client_id", _spotifyCredentialsSettings.ClientId);
@@ -36,10 +38,14 @@ namespace MaiXIFY.Spotify_WebAPI_Wrapper
         }
 
 
-        public bool RequestAccessAndRefreshTokens (HttpRequest request)
+        public bool RequestAccessAndRefreshTokens(HttpRequest request)
         {
             string state = request.Query["state"];
             if (state == null) //|| !state.Equals(cookie state))
+                return false;
+
+            string error = request.Query["error"];
+            if (error != null)
                 return false;
 
             //cookie statekey torles
@@ -48,10 +54,9 @@ namespace MaiXIFY.Spotify_WebAPI_Wrapper
             if (code == null)
                 return false;
 
-            var client = new HttpClient ();
-            client.BaseAddress = new Uri (tokenEndpoint);
+            var client = new HttpClient();
 
-            var content = new FormUrlEncodedContent (new [] {
+            var requestContent = new FormUrlEncodedContent (new[] {
                 new KeyValuePair<string, string> ("grant_type", "authorization_code"),
                 new KeyValuePair<string, string> ("code", code),
                 new KeyValuePair<string, string> ("redirect_uri", _spotifyCredentialsSettings.RedirectURI)
@@ -61,18 +66,22 @@ namespace MaiXIFY.Spotify_WebAPI_Wrapper
             byte[] clientCredentialsBytes = System.Text.Encoding.UTF8.GetBytes (clientCredentialsString);
             client.DefaultRequestHeaders.Add ("Authorization", "Basic " + Convert.ToBase64String (clientCredentialsBytes));
 
-            var response = client.PostAsync (tokenEndpoint, content).Result;
-    
+            var response = client.PostAsync (tokenEndpoint, requestContent).Result;
+
             if (!response.IsSuccessStatusCode)
                 return false;
 
-            var x = response.Content.ToString();
+            var responseContent = response.Content.ReadAsStringAsync().Result;
+            var spotifyToken = JsonConvert.DeserializeObject<SpotifyToken> (responseContent);
+
+            AccessToken = spotifyToken.AccessToken;
+            RefreshToken = spotifyToken.RefreshToken;
 
             return true;
         }
 
 
-        private string GenerateRandomString (int length)
+        private string GenerateRandomString(int length)
         {
             string text = "";
             string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -82,6 +91,21 @@ namespace MaiXIFY.Spotify_WebAPI_Wrapper
                 text += chars[Convert.ToInt32(rnd.Next(0, chars.Length - 1))];
 
             return text;
+        }
+
+
+        private class SpotifyToken
+        {
+            [JsonProperty(PropertyName = "access_token")]
+            public string AccessToken { get; set; }
+            [JsonProperty(PropertyName = "token_type")]
+            public string TokenType { get; set; }
+            [JsonProperty(PropertyName = "scope")]
+            public string Scope { get; set; }
+            [JsonProperty(PropertyName = "expires_in")]
+            public int ExpiresIn { get; set; }
+            [JsonProperty(PropertyName = "refresh_token")]
+            public string RefreshToken { get; set; }
         }
     }
 }

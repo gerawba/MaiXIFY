@@ -10,17 +10,17 @@ namespace MaiXIFY.Controllers
 {
     public class LoginController : Controller
     {
-        private Spotify_WebAPI_Wrapper.ISpotifyAuthorization _spotifyAuthorization;
+        private SpotifyWebAPIWrapper.ISpotifyAuthorization _spotifyAuthorization;
 
-        public LoginController(Spotify_WebAPI_Wrapper.ISpotifyAuthorization spotifyAuthorization) 
+        public LoginController (SpotifyWebAPIWrapper.ISpotifyAuthorization spotifyAuthorization) 
         {
             _spotifyAuthorization = spotifyAuthorization;
         }
 
         // GET: /<controller>/
-        public IActionResult Index()
+        public IActionResult Index ()
         {
-            string scope = "user-read-private user-read-email playlist-modify-public";
+            string scope = "user-follow-modify streaming";
 
             return Redirect (_spotifyAuthorization.RequestAuthorization (scope));
         }

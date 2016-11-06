@@ -10,26 +10,31 @@ namespace MaiXIFY.Controllers
 {
     public class CallbackController : Controller
     {
-        private Spotify_WebAPI_Wrapper.ISpotifyAuthorization _spotifyAuthorization;
+        private SpotifyWebAPIWrapper.ISpotifyAuthorization _spotifyAuthorization;
 
-        public CallbackController(Spotify_WebAPI_Wrapper.ISpotifyAuthorization spotifyAuthorization)
+        public CallbackController (SpotifyWebAPIWrapper.ISpotifyAuthorization spotifyAuthorization)
         {
             _spotifyAuthorization = spotifyAuthorization;
         }
 
 
         // GET: /<controller>/
-        public IActionResult Index()
+        public IActionResult Index ()
         {
-            _spotifyAuthorization.RequestAccessAndRefreshTokens (HttpContext.Request);
+            bool success = _spotifyAuthorization.RequestAccessAndRefreshTokens (HttpContext.Request);
 
-            return View();
+            if (!success)
+                return new RedirectToActionResult ("Error", "Callback", null);
+
+            ViewBag.Message = "Hozzaférés OK";
+            return new RedirectToActionResult ("About", "Home", null);
         }
 
 
-        public IActionResult Error()
+        public IActionResult Error ()
         {
-            return View();
+            ViewBag.Message = "Hiba történt a CALLBACK hivasakor. Talan nem adtal engedelyt a MaiXIFIY-nak? Netan manualisan kerted le az oldalt, es nem atiranyitottak?";
+            return View ();
         }
     }
 }

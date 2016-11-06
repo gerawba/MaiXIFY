@@ -35,8 +35,9 @@ namespace MaiXIFY
         {
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
-            services.Configure<Spotify_WebAPI_Wrapper.SpotifyCredentialsSettings>(Configuration.GetSection("SpotifyCredentials"));
-            services.AddSingleton<Spotify_WebAPI_Wrapper.ISpotifyAuthorization, Spotify_WebAPI_Wrapper.SpotifyAuthorization>();
+            services.Configure<SpotifyWebAPIWrapper.SpotifyCredentialsSettings>(Configuration.GetSection("SpotifyCredentials"));
+            services.AddSingleton<SpotifyWebAPIWrapper.ISpotifyAuthorization, SpotifyWebAPIWrapper.SpotifyAuthorization>();
+            services.AddSingleton<SpotifyWebAPIWrapper.ISpotifyEndpointAccessor, SpotifyWebAPIWrapper.SpotifyEndpointAccessor>();
 
             services.AddMvc();
         }

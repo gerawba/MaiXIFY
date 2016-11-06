@@ -8,7 +8,14 @@ using Microsoft.Extensions.Options;
 namespace MaiXIFY.Controllers
 {
     public class HomeController : Controller
-    { 
+    {
+        private SpotifyWebAPIWrapper.ISpotifyEndpointAccessor _spotifyEndpointAccessor;
+
+        public HomeController (SpotifyWebAPIWrapper.ISpotifyEndpointAccessor spotifyEndpointAccessor)
+        {
+            _spotifyEndpointAccessor = spotifyEndpointAccessor;
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -16,9 +23,12 @@ namespace MaiXIFY.Controllers
 
         public IActionResult About()
         {
-            ViewData["Message"] = "Your application description page.";
+            var spotifyUserProfile = _spotifyEndpointAccessor.GetCurrentUserProfile ();
+            if (spotifyUserProfile == null)
+                ViewBag.Message = "Hiba tortent a GetCurrentProfile lekeresekor";
 
-            return View();
+            ViewBag.Message = spotifyUserProfile.DisplayName + spotifyUserProfile.Id;
+            return View ();
         }
 
         public IActionResult Contact()
