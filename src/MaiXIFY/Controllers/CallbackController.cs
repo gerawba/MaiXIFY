@@ -24,8 +24,7 @@ namespace MaiXIFY.Controllers
             if (!success)
                 return new RedirectToActionResult ("Error", "Callback", null);
 
-            ViewData["Message"] = "Hozzaférés OK";
-            return new RedirectToActionResult ("SelectPlaylists", "Home", null);
+            return new RedirectToActionResult ("Index", "Home", null);
         }
 
 
