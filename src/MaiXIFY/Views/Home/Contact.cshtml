@@ -4,14 +4,9 @@
 <h2>@ViewData["Title"].</h2>
 <h3>@ViewData["Message"]</h3>
 
-<address>
-    One Microsoft Way<br />
-    Redmond, WA 98052-6399<br />
-    <abbr title="Phone">P:</abbr>
-    425.555.0100
-</address>
-
-<address>
-    <strong>Support:</strong> <a href="mailto:Support@example.com">Support@example.com</a><br />
-    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-</address>
+<div>
+    <iframe src="@ViewData["widgetSrc"]" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
+</div>
+<div>
+    <iframe src="https://embed.spotify.com/?uri=spotify%3Auser%3Aqlmhuge%3Aplaylist%3A6Df19VKaShrdWrAnHinwVO&theme=white&view=coverart" width="300" height="80" frameborder="0" allowtransparency="true"></iframe>
+</div>

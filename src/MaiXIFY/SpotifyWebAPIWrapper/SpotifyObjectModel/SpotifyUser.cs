@@ -6,11 +6,12 @@ using Newtonsoft.Json;
 
 namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
 {
-    public class SpotifyUserProfile
+    public class SpotifyUser
     {
+        [JsonProperty(PropertyName = "id")]
+        public string Id { get; set; }
+
         [JsonProperty (PropertyName = "display_name")]
         public string DisplayName { get; set; }
-        [JsonProperty (PropertyName = "id")]
-        public string Id { get; set; }
     }
 }

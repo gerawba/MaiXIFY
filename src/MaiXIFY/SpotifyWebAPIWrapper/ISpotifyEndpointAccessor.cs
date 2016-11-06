@@ -8,6 +8,8 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 {
     public interface ISpotifyEndpointAccessor
     {
-        SpotifyUserProfile GetCurrentUserProfile ();
+        SpotifyUser GetCurrentUserProfile ();
+
+        List<SpotifyPlaylist> GetUserPlaylists (string userId);
     }
 }

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace MaiXIFY.Controllers
 {
@@ -26,7 +25,7 @@ namespace MaiXIFY.Controllers
                 return new RedirectToActionResult ("Error", "Callback", null);
 
             ViewData["Message"] = "Hozzaférés OK";
-            return new RedirectToActionResult ("About", "Home", null);
+            return new RedirectToActionResult ("SelectPlaylists", "Home", null);
         }
 
 

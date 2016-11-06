@@ -1,0 +1,17 @@
+﻿@model IList<SpotifyPlaylist>
+
+
+@{
+    ViewData["Title"] = "User playlists";
+}
+<h2>@ViewData["Title"].</h2>
+<h2>@ViewData["Message"]</h2>
+
+@foreach (var playlist in Model)
+{
+<div>
+    <p>@playlist.Name :</p>
+    <p>@playlist.Uri</p>
+    <iframe src="@SpotifyHelpers.MakeWidgetSrc(playlist.Uri)" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
+</div>
+}

@@ -21,6 +21,18 @@ namespace MaiXIFY.Controllers
             return View ();
         }
 
+        public IActionResult SelectPlaylists (string userId)
+        {
+            List<SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist> playlists = new List<SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist>();
+
+            if (userId == null) {
+                ViewData["Message"] = "Nincs felhasználó kiválasztva!";
+            } else
+                playlists = _spotifyEndpointAccessor.GetUserPlaylists (userId);
+
+            return View (playlists);
+        }
+
         public IActionResult About ()
         {
             var spotifyUserProfile = _spotifyEndpointAccessor.GetCurrentUserProfile ();
@@ -31,11 +43,15 @@ namespace MaiXIFY.Controllers
             return View ();
         }
 
-        public IActionResult Contact()
+        public IActionResult Contact ()
         {
             ViewData["Message"] = "Your contact page.";
 
-            return View();
+            string ownerId = "gerawba";
+
+            _spotifyEndpointAccessor.GetUserPlaylists (ownerId);
+
+            return View ();
         }
 
         public IActionResult Error()
