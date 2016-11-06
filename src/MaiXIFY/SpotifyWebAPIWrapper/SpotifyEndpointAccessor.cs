@@ -42,7 +42,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         }
 
 
-        public List<SpotifyPlaylist> GetUserPlaylists (string userId)
+        public List<SpotifyPlaylistSimplified> GetUserPlaylists (string userId)
         {
             var client = new HttpClient();
 
@@ -54,15 +54,31 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
                 return null;
 
             var responseContent = response.Content.ReadAsStringAsync ().Result;
-            var userPlaylistsPaging = JsonConvert.DeserializeObject<SpotifyPaging<SpotifyPlaylist>> (responseContent);
+            var userPlaylistsPaging = JsonConvert.DeserializeObject<SpotifyPaging<SpotifyPlaylistSimplified>> (responseContent);
 
             var playlistsNumber = userPlaylistsPaging.TotalItemNumbers > 20 ? 20 : userPlaylistsPaging.TotalItemNumbers;     //because paging
 
-            List<SpotifyPlaylist> userPlaylists = new List<SpotifyPlaylist>();
+            List<SpotifyPlaylistSimplified> userPlaylists = new List<SpotifyPlaylistSimplified>();
             for (int i = 0; i < playlistsNumber; ++i)
                 userPlaylists.Add(userPlaylistsPaging.Items[i]);
 
             return userPlaylists;
+        }
+
+
+        public SpotifyPlaylist GetPlaylist (string userId, string playlistId)
+        {
+            var client = new HttpClient();
+
+            client.DefaultRequestHeaders.Add("Authorization", AuthorizationHeader);
+
+            var response = client.GetAsync (baseUrl + usersUrl + userId + "/playlists/" + playlistId).Result;
+
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            var responseContent = response.Content.ReadAsStringAsync().Result;
+            return JsonConvert.DeserializeObject<SpotifyPlaylist> (responseContent);
         }
     }
 }

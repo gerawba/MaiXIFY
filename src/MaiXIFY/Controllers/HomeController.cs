@@ -16,6 +16,7 @@ namespace MaiXIFY.Controllers
             _spotifyEndpointAccessor = spotifyEndpointAccessor;
         }
 
+
         public IActionResult Index ()
         {
             return View ();
@@ -23,7 +24,7 @@ namespace MaiXIFY.Controllers
 
         public IActionResult SelectPlaylists (string userId)
         {
-            List<SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist> playlists = new List<SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist>();
+            List<SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylistSimplified> playlists = new List<SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylistSimplified>();
 
             if (userId == null) {
                 ViewData["Message"] = "Nincs felhasználó kiválasztva!";
@@ -32,6 +33,22 @@ namespace MaiXIFY.Controllers
 
             return View (playlists);
         }
+
+
+        public IActionResult GetPlaylist (string userId, string playlistId)
+        {
+            SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist playlist = new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist ();
+
+            if (userId == null || playlist == null)
+            {
+                ViewData["Message"] = "Nincs felhasználó/playlist kiválasztva!";
+            }
+            else
+                playlist = _spotifyEndpointAccessor.GetPlaylist (userId, playlistId);
+
+            return View (playlist);
+        }
+
 
         public IActionResult About ()
         {
@@ -43,6 +60,7 @@ namespace MaiXIFY.Controllers
             return View ();
         }
 
+
         public IActionResult Contact ()
         {
             ViewData["Message"] = "Your contact page.";
@@ -53,6 +71,7 @@ namespace MaiXIFY.Controllers
 
             return View ();
         }
+
 
         public IActionResult Error()
         {

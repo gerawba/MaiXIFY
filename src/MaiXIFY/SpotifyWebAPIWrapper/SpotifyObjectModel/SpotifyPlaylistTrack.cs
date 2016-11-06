@@ -9,6 +9,9 @@ namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
     public class SpotifyPlaylistTrack
     {
         [JsonProperty(PropertyName = "track")]
-        public string Track { get; set; }
+        public SpotifyTrack Track { get; set; }
+
+        [JsonProperty(PropertyName = "is_local")]
+        public bool IsLocal { get; set; }
     }
 }
