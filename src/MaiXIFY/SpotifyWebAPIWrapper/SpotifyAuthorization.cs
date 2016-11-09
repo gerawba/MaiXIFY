@@ -19,6 +19,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         public static string AccessToken { get; set; }
         public static string RefreshToken { get; set; }
 
+
         public SpotifyAuthorization (IOptions<SpotifyWebAPIWrapper.SpotifyCredentialsSettings> spotifyCredentialsSettings)
         {
             _spotifyCredentialsSettings = spotifyCredentialsSettings.Value;

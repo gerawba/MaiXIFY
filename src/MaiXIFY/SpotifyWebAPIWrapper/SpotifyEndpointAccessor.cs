@@ -42,6 +42,9 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 
         public SpotifyTrack GetTrack (string trackId)
         {
+            if (trackId == null)
+                return null;
+
             var client = GetSpotifyHttpClient ();
 
             var response = client.GetAsync (baseUrl + tracksUrl + trackId).Result;
@@ -56,6 +59,9 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 
         public List<SpotifyPlaylistSimplified> GetUserPlaylists (string userId)
         {
+            if (userId == null)
+                return null;
+
             var client = GetSpotifyHttpClient ();
 
             var response = client.GetAsync (baseUrl + usersUrl + userId + "/playlists").Result;
@@ -78,6 +84,9 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 
         public SpotifyPlaylist GetPlaylist (string userId, string playlistId)
         {
+            if (userId == null || playlistId == null)
+                return null;
+
             var client = GetSpotifyHttpClient ();
             
             var response = client.GetAsync (baseUrl + usersUrl + userId + "/playlists/" + playlistId).Result;
@@ -92,7 +101,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 
         public List<SpotifyPlaylist> GetPlaylists (List<SpotifyHelpers.SelectedPlaylistElem> selectedPlaylists)
         {
-            if (selectedPlaylists.Count == 0)
+            if (selectedPlaylists.Count < 0)
                 return null;
 
             var client = GetSpotifyHttpClient ();
@@ -117,6 +126,12 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 
         public SpotifyPlaylist CreatePlaylist (string userId, string playlistName, bool isPublic = true, bool isCollaborative = false)
         {
+            if (userId == null)
+                return null;
+
+            if (playlistName == null)
+                playlistName = SpotifyWebAPIWrapper.SpotifyHelpers.MakeDefaultPlaylistName ();
+
             var client = GetSpotifyHttpClient ();
 
             SpotifyHelpers.RequestContentCreatePlaylist requestContent = new SpotifyHelpers.RequestContentCreatePlaylist ();
@@ -136,6 +151,9 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 
         public bool AddTracksToPlaylist (string userId, string playlistId, List<string> trackUriList)
         {
+            if (userId == null || playlistId == null || trackUriList.Count < 1)
+                return false;
+
             var client = GetSpotifyHttpClient ();
 
             SpotifyHelpers.RequestContentAddTrackToPlaylist requestContent = new SpotifyHelpers.RequestContentAddTrackToPlaylist ();

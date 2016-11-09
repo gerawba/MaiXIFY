@@ -22,25 +22,14 @@ namespace MaiXIFY.Controllers
             return View ();
         }
 
-        //torolheto majd
-        public IActionResult GetTrack (string trackId)
-        {
-            SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyTrack track = _spotifyEndpointAccessor.GetTrack (trackId);
-
-            if (track == null) {
-                ViewData["Message"] = "Nem sikerült lekérni a számot!";
-            }
-
-            return Json (track);
-        }
-
 
         public IActionResult GetUserPlaylists (string userId)
         {
-            List<SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylistSimplified> playlists = new List<SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylistSimplified>();
+            List<SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylistSimplified> playlists = new List<SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylistSimplified> ();
 
             if (userId == null) {
                 ViewData["Message"] = "Nincs felhasználó kiválasztva!";
+                return View ();
             } else
                 playlists = _spotifyEndpointAccessor.GetUserPlaylists (userId);
 
@@ -52,9 +41,9 @@ namespace MaiXIFY.Controllers
         {
             SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist playlist = new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist ();
 
-            if (userId == null || playlist == null)
-            {
+            if (userId == null || playlistId == null) {
                 ViewData["Message"] = "Nincs felhasználó/playlist kiválasztva!";
+                return View ();
             }
             else
                 playlist = _spotifyEndpointAccessor.GetPlaylist (userId, playlistId);
@@ -70,13 +59,14 @@ namespace MaiXIFY.Controllers
             //    return View ();
             //}
 
+            // TODO majd torolni csak teszteles miatt van itt
             SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem pl1 = new SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem ();
             pl1.UserId = "gerawba";
             pl1.PlaylistId = "47VN6Xbly3m0n77coFlFV9";
 
             SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem pl2 = new SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem ();
             pl2.UserId = "gerawba";
-            pl2.PlaylistId = "6VOydczE7fWoHEaND4qqPxB";
+            pl2.PlaylistId = "6VOydczE7fWoHEaND4qqPB";
 
             selectedPlaylists.Add(pl1);
             selectedPlaylists.Add(pl2);
@@ -102,42 +92,6 @@ namespace MaiXIFY.Controllers
         }
 
 
-        public IActionResult CreatePlaylist (string playlistName, bool isPublic = true, bool isCollaborative = false)
-        {
-            SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist playlist = new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist ();
-
-            SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyUser currentUser = _spotifyEndpointAccessor.GetCurrentUserProfile ();
-
-            if (currentUser.Id == null || playlistName == null) {
-                ViewData["Message"] = "Nem adtál meg nevet a létrehozandó playlistedhez!";
-            }
-            else
-                playlist = _spotifyEndpointAccessor.CreatePlaylist (currentUser.Id, playlistName, isPublic, isCollaborative);
-
-            return Json (playlist);
-        }
-
-
-        public IActionResult AddTrackToPlaylist (string playlistId, List<string> trackUriList)
-        {
-            SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist playlist = new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist ();
-
-            SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyUser currentUser = _spotifyEndpointAccessor.GetCurrentUserProfile ();
-
-            if (trackUriList.Count < 1)
-                ViewData["Message"] = "Nem adtál meg egy hozzáadandó számot sem!";
-            else if (currentUser.Id == null || playlistId == null)
-                ViewData["Message"] = "Nem adtál meg nevet a létrehozandó playlistedhez!";
-            else {
-                bool success = _spotifyEndpointAccessor.AddTracksToPlaylist(currentUser.Id, playlistId, trackUriList);
-                if (success)
-                    ViewData["Message"] = "Sikeresen hozzaadtuk a szamokat a playlisthez!";
-            }
-
-            return View ();
-        }
-
-
         public IActionResult About ()
         {
             var spotifyUserProfile = _spotifyEndpointAccessor.GetCurrentUserProfile ();
@@ -153,17 +107,13 @@ namespace MaiXIFY.Controllers
         {
             ViewData["Message"] = "Your contact page.";
 
-            string ownerId = "gerawba";
-
-            _spotifyEndpointAccessor.GetUserPlaylists (ownerId);
-
             return View ();
         }
 
 
-        public IActionResult Error()
+        public IActionResult Error ()
         {
-            return View();
+            return View ();
         }
     }
 }

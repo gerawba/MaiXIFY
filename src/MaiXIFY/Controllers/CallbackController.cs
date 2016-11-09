@@ -30,7 +30,7 @@ namespace MaiXIFY.Controllers
 
         public IActionResult Error ()
         {
-            ViewBag.Message = "Hiba történt a CALLBACK hivásakor - ez az oldal csak átirányitás után érhető el. Talén nem adtál engedélyt a MaiXIFIY appnek? Netén manuálisan tévedtél erre a címre?";
+            ViewBag.Message = "Hiba - ez az oldal csak átirányitás után érhető el. Talén nem adtál engedélyt a MaiXIFIY appnek? Netén manuálisan tévedtél erre a címre?";
             return View ();
         }
     }

@@ -18,10 +18,6 @@ namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
         }
 
 
-
-
-
-
         public SpotifyPlaylist GenerateRecommendedPlaylist (List<SpotifyPlaylist> selectedPlaylists, string playlistName = "MaiXIFY :)", bool isPublic = true, bool isCollaborative = false)
         {
             if (selectedPlaylists.Count < 2)
@@ -90,15 +86,6 @@ namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
         }
 
 
-
-
-
-
-
-
-
-
-
         public class PlaylistMixerSettings
         {
             public double Threshold { get; set; }
@@ -117,6 +104,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
                 Popularity,
                 Random
             };
+
 
             public static SortOptions ConvertStringToSortOptions (string sortOption)
             {
