@@ -10,6 +10,8 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
     {
         SpotifyUser GetCurrentUserProfile ();
 
+        SpotifyTrack GetTrack (string trackId);
+
         List<SpotifyPlaylistSimplified> GetUserPlaylists (string userId);
 
         SpotifyPlaylist GetPlaylist (string userId, string playlistId);
@@ -18,6 +20,6 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 
         SpotifyPlaylist CreatePlaylist (string userId, string playlistName, bool isPublic = true, bool isCollaborative = false);
 
-        bool AddTrackToPlaylist (string userId, string playlistId, List<string> trackUriList);
+        bool AddTracksToPlaylist (string userId, string playlistId, List<string> trackUriList);
     }
 }

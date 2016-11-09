@@ -14,10 +14,10 @@ namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
-        [JsonProperty(PropertyName = "popularity ")]
+        [JsonProperty(PropertyName = "popularity")]
         public int Popularity { get; set; }
 
-        [JsonProperty(PropertyName = "genres ")]
+        [JsonProperty(PropertyName = "genres")]
         public List<string> Genres { get; set; }
 
         [JsonProperty(PropertyName = "uri")]

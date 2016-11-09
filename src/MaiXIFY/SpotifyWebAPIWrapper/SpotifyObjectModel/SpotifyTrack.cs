@@ -17,7 +17,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
         [JsonProperty(PropertyName = "artists")]
         public List<SpotifyArtist> Artists { get; set; }
 
-        [JsonProperty(PropertyName = "popularity ")]
+        [JsonProperty(PropertyName = "popularity")]
         public int Popularity { get; set; }
 
         [JsonProperty(PropertyName = "uri")]

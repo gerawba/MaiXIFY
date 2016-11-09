@@ -22,6 +22,19 @@ namespace MaiXIFY.Controllers
             return View ();
         }
 
+        //torolheto majd
+        public IActionResult GetTrack (string trackId)
+        {
+            SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyTrack track = _spotifyEndpointAccessor.GetTrack (trackId);
+
+            if (track == null) {
+                ViewData["Message"] = "Nem sikerült lekérni a számot!";
+            }
+
+            return Json (track);
+        }
+
+
         public IActionResult GetUserPlaylists (string userId)
         {
             List<SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylistSimplified> playlists = new List<SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylistSimplified>();
@@ -50,20 +63,40 @@ namespace MaiXIFY.Controllers
         }
 
 
-        public IActionResult SelectPlaylists (List<SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem> selectedPlaylists)
+        public IActionResult GeneratePlaylist (List<SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem> selectedPlaylists, string playlistName, bool isPublic, bool isCollaborative)
         {
+            //if (selectedPlaylists.Count < 2) {
+            //    ViewData["Message"] = "Nincs legalább 2 playlist kiválasztva!";
+            //    return View ();
+            //}
+
+            SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem pl1 = new SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem ();
+            pl1.UserId = "gerawba";
+            pl1.PlaylistId = "47VN6Xbly3m0n77coFlFV9";
+
+            SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem pl2 = new SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem ();
+            pl2.UserId = "gerawba";
+            pl2.PlaylistId = "6VOydczE7fWoHEaND4qqPxB";
+
+            selectedPlaylists.Add(pl1);
+            selectedPlaylists.Add(pl2);
+
             List<SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist> selectedPlaylistsObject = _spotifyEndpointAccessor.GetPlaylists (selectedPlaylists);
-            if (selectedPlaylistsObject.Count < 1) {
-                ViewData["Message"] = "Nincs egy playlist sem kiválasztva!";
-                return View ();
+
+            SpotifyWebAPIWrapper.SpotifyObjectModel.PlaylistMixerCoreLogic mixer = new SpotifyWebAPIWrapper.SpotifyObjectModel.PlaylistMixerCoreLogic(_spotifyEndpointAccessor);
+            if (HttpContext.Request.Cookies.ContainsKey (SpotifyWebAPIWrapper.SpotifyHelpers.thresholdSettingCookieKey) &&
+                HttpContext.Request.Cookies.ContainsKey (SpotifyWebAPIWrapper.SpotifyHelpers.recommendedMusicSettingCookieKey) &&
+                HttpContext.Request.Cookies.ContainsKey (SpotifyWebAPIWrapper.SpotifyHelpers.sortOptionSettingCookieKey))
+            {               
+                mixer.Settings.Threshold = Convert.ToDouble(HttpContext.Request.Cookies[SpotifyWebAPIWrapper.SpotifyHelpers.thresholdSettingCookieKey]);
+                mixer.Settings.RecommendedMusic = Convert.ToBoolean(HttpContext.Request.Cookies[SpotifyWebAPIWrapper.SpotifyHelpers.recommendedMusicSettingCookieKey]);
+                mixer.Settings.SortOption = SpotifyWebAPIWrapper.SpotifyObjectModel.PlaylistMixerCoreLogic.PlaylistMixerSettings.ConvertStringToSortOptions(HttpContext.Request.Cookies[SpotifyWebAPIWrapper.SpotifyHelpers.sortOptionSettingCookieKey]);
             }
 
-            SpotifyWebAPIWrapper.SpotifyObjectModel.PlaylistMixerCoreLogic mixer = new SpotifyWebAPIWrapper.SpotifyObjectModel.PlaylistMixerCoreLogic (_spotifyEndpointAccessor);
-            mixer.Settings.Threshold = Convert.ToDouble (HttpContext.Request.Cookies["thresholdSetting"]);
-            mixer.Settings.RecommendedMusic = Convert.ToBoolean (HttpContext.Request.Cookies["recommendedMusicSetting"]);
-            mixer.Settings.SortOption = SpotifyWebAPIWrapper.SpotifyObjectModel.PlaylistMixerCoreLogic.PlaylistMixerSettings.ConvertStringToSortOptions (HttpContext.Request.Cookies["sortOptionSetting"]);
+            if (playlistName == null || playlistName == "")
+                playlistName = SpotifyWebAPIWrapper.SpotifyHelpers.MakeDefaultPlaylistName ();
 
-            SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist generatedPlaylist = mixer.GenerateRecommendedPlaylist (selectedPlaylistsObject);
+            SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist generatedPlaylist = mixer.GenerateRecommendedPlaylist (selectedPlaylistsObject, playlistName, isPublic, isCollaborative);
 
             return Json (generatedPlaylist);
         }
@@ -75,8 +108,7 @@ namespace MaiXIFY.Controllers
 
             SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyUser currentUser = _spotifyEndpointAccessor.GetCurrentUserProfile ();
 
-            if (currentUser.Id == null || playlistName == null)
-            {
+            if (currentUser.Id == null || playlistName == null) {
                 ViewData["Message"] = "Nem adtál meg nevet a létrehozandó playlistedhez!";
             }
             else
@@ -88,24 +120,16 @@ namespace MaiXIFY.Controllers
 
         public IActionResult AddTrackToPlaylist (string playlistId, List<string> trackUriList)
         {
-            SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist playlist = new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist();
+            SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist playlist = new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist ();
 
-            SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyUser currentUser = _spotifyEndpointAccessor.GetCurrentUserProfile();
+            SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyUser currentUser = _spotifyEndpointAccessor.GetCurrentUserProfile ();
 
-            if (trackUriList == null)
-                trackUriList = new List<string> ();
-            
-            // TODO csak a peldaert ezeket majd torolni kell
-            trackUriList.Add("spotify:track:1UbqS1I358tyD3Dz6sEJ4P");
-            trackUriList.Add("spotify:track:7FnaZ2MLfUk8Mt2hSbquAU");
-
-            if (currentUser.Id == null || playlistId == null)
-            {
+            if (trackUriList.Count < 1)
+                ViewData["Message"] = "Nem adtál meg egy hozzáadandó számot sem!";
+            else if (currentUser.Id == null || playlistId == null)
                 ViewData["Message"] = "Nem adtál meg nevet a létrehozandó playlistedhez!";
-            }
-            else
-            {
-                bool success = _spotifyEndpointAccessor.AddTrackToPlaylist(currentUser.Id, playlistId, trackUriList);
+            else {
+                bool success = _spotifyEndpointAccessor.AddTracksToPlaylist(currentUser.Id, playlistId, trackUriList);
                 if (success)
                     ViewData["Message"] = "Sikeresen hozzaadtuk a szamokat a playlisthez!";
             }

@@ -14,7 +14,6 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
     public class SpotifyAuthorization : ISpotifyAuthorization
     {
         private SpotifyWebAPIWrapper.SpotifyCredentialsSettings _spotifyCredentialsSettings { get; set; }
-        private const string stateCookieKey = "stateKey";
         private const string authorizeEndpoint = "https://accounts.spotify.com/authorize";
         private const string tokenEndpoint = "https://accounts.spotify.com/api/token";
         public static string AccessToken { get; set; }
@@ -37,7 +36,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
             queryString = queryString.Add ("state", stateCookie);
             queryString = queryString.Add ("scope", scope);
 
-            context.Response.Cookies.Append (stateCookieKey, stateCookie);
+            context.Response.Cookies.Append (SpotifyHelpers.stateCookieKey, stateCookie);
 
             return authorizeEndpoint + queryString.ToUriComponent ();
         }
@@ -46,14 +45,17 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         public bool RequestAccessAndRefreshTokens (HttpContext context)
         {
             string state = context.Request.Query["state"];
-            if (state == null || !state.Equals (context.Request.Cookies[stateCookieKey]))
+            if (!context.Request.Cookies.ContainsKey (SpotifyHelpers.stateCookieKey))
+                return false;
+
+            if (state == null || !state.Equals (context.Request.Cookies[SpotifyHelpers.stateCookieKey]))
                 return false;
 
             string error = context.Request.Query["error"];
             if (error != null)
                 return false;
 
-            context.Response.Cookies.Delete (stateCookieKey);
+            context.Response.Cookies.Delete (SpotifyHelpers.stateCookieKey);
 
             string code = context.Request.Query["code"];
             if (code == null)

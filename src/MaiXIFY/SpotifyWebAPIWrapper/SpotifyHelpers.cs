@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -9,6 +10,13 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 {
     public static class SpotifyHelpers
     {
+        const string basePlaylistName = "MaiXIFY :) ";
+        public const string trackUri = "spotify:track:";
+        public const string thresholdSettingCookieKey = "thresholdSetting";
+        public const string recommendedMusicSettingCookieKey = "recommendedMusicSetting";
+        public const string sortOptionSettingCookieKey = "sortOptionSetting";
+        public const string stateCookieKey = "stateKey";
+
         public static string MakeWidgetSrc (string ownerId, string playlistId)
         {
             string embedWidgetSource = "https://embed.spotify.com/?uri=spotify";
@@ -24,6 +32,22 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         public static string MakeWidgetSrc (string playlistUri)
         {
             return "https://embed.spotify.com/?uri=" + playlistUri;
+        }
+
+
+        public static string MakeDefaultPlaylistName ()
+        {
+            string playlistName = basePlaylistName;
+            DateTime date = DateTime.Now;
+
+            return playlistName + "[" + date.Year.ToString().Remove(0, 2) + date.Month.ToString() + date.Day.ToString() + date.Hour.ToString() + date.Minute.ToString() + date.Second.ToString() + "]";
+        }
+
+
+        public class TrackInfo
+        {
+            public int HitCount { get; set; }
+            public int Popularity { get; set; }
         }
 
 

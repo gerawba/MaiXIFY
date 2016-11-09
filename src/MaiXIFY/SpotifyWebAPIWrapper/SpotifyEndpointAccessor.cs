@@ -12,6 +12,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
     {
         private static string baseUrl = "https://api.spotify.com";
         private static string usersUrl = "/v1/users/";
+        private static string tracksUrl = "/v1/tracks/";
 
         public static string AuthorizationHeader
         {
@@ -36,6 +37,20 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 
             var responseContent = response.Content.ReadAsStringAsync ().Result;
             return JsonConvert.DeserializeObject<SpotifyUser> (responseContent);
+        }
+
+
+        public SpotifyTrack GetTrack (string trackId)
+        {
+            var client = GetSpotifyHttpClient ();
+
+            var response = client.GetAsync (baseUrl + tracksUrl + trackId).Result;
+
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            var responseContent = response.Content.ReadAsStringAsync ().Result;
+            return JsonConvert.DeserializeObject<SpotifyTrack> (responseContent);
         }
 
 
@@ -119,7 +134,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         }
 
 
-        public bool AddTrackToPlaylist (string userId, string playlistId, List<string> trackUriList)
+        public bool AddTracksToPlaylist (string userId, string playlistId, List<string> trackUriList)
         {
             var client = GetSpotifyHttpClient ();
 
