@@ -50,10 +50,22 @@ namespace MaiXIFY.Controllers
         }
 
 
-        public IActionResult SelectPlaylists (List<SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem> selectedPlaylist)
+        public IActionResult SelectPlaylists (List<SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem> selectedPlaylists)
         {
-            
-            return Json ("Ok");
+            List<SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist> selectedPlaylistsObject = _spotifyEndpointAccessor.GetPlaylists (selectedPlaylists);
+            if (selectedPlaylistsObject.Count < 1) {
+                ViewData["Message"] = "Nincs egy playlist sem kiválasztva!";
+                return View ();
+            }
+
+            SpotifyWebAPIWrapper.SpotifyObjectModel.PlaylistMixerCoreLogic mixer = new SpotifyWebAPIWrapper.SpotifyObjectModel.PlaylistMixerCoreLogic (_spotifyEndpointAccessor);
+            mixer.Settings.Threshold = Convert.ToDouble (HttpContext.Request.Cookies["thresholdSetting"]);
+            mixer.Settings.RecommendedMusic = Convert.ToBoolean (HttpContext.Request.Cookies["recommendedMusicSetting"]);
+            mixer.Settings.SortOption = SpotifyWebAPIWrapper.SpotifyObjectModel.PlaylistMixerCoreLogic.PlaylistMixerSettings.ConvertStringToSortOptions (HttpContext.Request.Cookies["sortOptionSetting"]);
+
+            SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist generatedPlaylist = mixer.GenerateRecommendedPlaylist (selectedPlaylistsObject);
+
+            return Json (generatedPlaylist);
         }
 
 

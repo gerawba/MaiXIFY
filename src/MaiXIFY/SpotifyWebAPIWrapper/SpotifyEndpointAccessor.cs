@@ -24,7 +24,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
             }
         }
 
-
+        
         public SpotifyUser GetCurrentUserProfile ()
         {
             var client = GetSpotifyHttpClient ();
@@ -70,9 +70,35 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
             if (!response.IsSuccessStatusCode)
                 return null;
 
-            var responseContent = response.Content.ReadAsStringAsync().Result;
+            var responseContent = response.Content.ReadAsStringAsync ().Result;
             return JsonConvert.DeserializeObject<SpotifyPlaylist> (responseContent);
         }
+
+
+        public List<SpotifyPlaylist> GetPlaylists (List<SpotifyHelpers.SelectedPlaylistElem> selectedPlaylists)
+        {
+            if (selectedPlaylists.Count == 0)
+                return null;
+
+            var client = GetSpotifyHttpClient ();
+
+            List<SpotifyPlaylist> playlists = new List<SpotifyPlaylist> ();
+
+            foreach (SpotifyHelpers.SelectedPlaylistElem playlistElem in selectedPlaylists) {
+                var response = client.GetAsync (baseUrl + usersUrl + playlistElem.UserId + "/playlists/" + playlistElem.PlaylistId).Result;
+
+                if (!response.IsSuccessStatusCode)
+                    break;
+
+                var responseContent = response.Content.ReadAsStringAsync ().Result;
+                SpotifyPlaylist playlist = JsonConvert.DeserializeObject<SpotifyPlaylist> (responseContent);
+                playlists.Add (playlist);
+            }
+
+
+            return playlists;
+        }
+
 
         public SpotifyPlaylist CreatePlaylist (string userId, string playlistName, bool isPublic = true, bool isCollaborative = false)
         {
