@@ -10,6 +10,8 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
     {
         SpotifyUser GetCurrentUserProfile ();
 
+        SpotifyUser GetUserProfile (string userId);
+
         SpotifyTrack GetTrack (string trackId);
 
         List<SpotifyPlaylistSimplified> GetUserPlaylists (string userId);

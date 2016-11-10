@@ -25,7 +25,7 @@ Please select how do you want to add playlists:
     </div>
 </div>
 
-<script src="~/Scripts/handlebars-v4.0.5.js"></script>
+<script src="/js/handlebars-v4.0.5.js"></script>
 
 <script>
 
@@ -84,7 +84,7 @@ Please select how do you want to add playlists:
         var spotifyUserName = $('#spotifyUserInput').val();
         $('#divForPlaylists').remove();
         if (spotifyUserName.length <= 0) {
-            alert('Please add a Spotify User name!')
+            alert('Please add a Spotify username!')
         }
         else {
             $.ajax({
@@ -94,6 +94,11 @@ Please select how do you want to add playlists:
                 cache: false,
                 success: function (playlists) {
                     usersPlaylists = playlists;
+                    if (usersPlaylists.hasOwnProperty('errorCode') && usersPlaylists.errorCode == 404) {
+                        alert('No such Spotify user!')
+                        return;
+                    }
+
                     var divForPlaylists = '<div id=' + "\"" + "divForPlaylists" + "\"" + "style=" + "\"" + "display:inline-block" + "\"" + ">";
                     $("#spotifyUserForm").append(divForPlaylists);
                     for (i = 0; i < usersPlaylists.length; i++) {
@@ -103,9 +108,6 @@ Please select how do you want to add playlists:
                                                 "</div>";
                         $("#divForPlaylists").append(playlistElement);
                     }
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    $('#lblCommentsNotification').text("Error encountered while saving the comments.");
                 }
             });
         }

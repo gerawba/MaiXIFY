@@ -18,7 +18,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
         }
 
 
-        public SpotifyPlaylist GenerateRecommendedPlaylist (List<SpotifyPlaylist> selectedPlaylists, string playlistName = "MaiXIFY :)", bool isPublic = true, bool isCollaborative = false)
+        public SpotifyPlaylist GenerateMaixifyPlaylist (List<SpotifyPlaylist> selectedPlaylists, string playlistName = "MaiXIFY :)", bool isPublic = true, bool isCollaborative = false)
         {
             if (selectedPlaylists.Count < 2)
                 return null;
@@ -41,8 +41,8 @@ namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
                     string trackArtist = track.Artists[0].Id;
                     int trackPopularity = track.Popularity;
 
-                    if (!tracksFrequency.ContainsKey(trackId)) {
-                        tracksFrequency[trackId] = new SpotifyHelpers.TrackInfo();
+                    if (!tracksFrequency.ContainsKey (trackId)) {
+                        tracksFrequency[trackId] = new SpotifyHelpers.TrackInfo ();
                         tracksFrequency[trackId].HitCount = 0;
                         tracksFrequency[trackId].Popularity = trackPopularity;
                     }
@@ -57,8 +57,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
                 }
             }
 
-            //if (Settings.RecommendedMusic)
-            //    tracksPopularity = tracksPopularity.Distinct ().OrderByDescending (p => p.Value).ToList ();
+
 
             List<KeyValuePair<string, SpotifyHelpers.TrackInfo>> sortedTracks = new List<KeyValuePair<string, SpotifyHelpers.TrackInfo>> ();
             if (Settings.SortOption == PlaylistMixerSettings.SortOptions.MostHit)
@@ -76,6 +75,14 @@ namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
                 }
             }
 
+            if (recommendedTrackUriList.Count < 1) {
+                if (Settings.RecommendedMusic == false)
+                    return null;
+                else {
+                    recommendedTrackUriList = GenerateRecommendedPlaylist (sortedTracks);
+                }
+            }
+
             string userId = _spotifyEndpointAccessor.GetCurrentUserProfile ().Id;
             SpotifyPlaylist generatedPlaylist = _spotifyEndpointAccessor.CreatePlaylist (userId, playlistName, isPublic, isCollaborative);
 
@@ -83,6 +90,15 @@ namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
                 return null;
 
             return generatedPlaylist;
+        }
+
+
+        private List<String> GenerateRecommendedPlaylist (List<KeyValuePair<string, SpotifyHelpers.TrackInfo>> gatheredTracks)
+        {
+            //if (Settings.RecommendedMusic)
+            //    tracksPopularity = tracksPopularity.Distinct ().OrderByDescending (p => p.Value).ToList ();
+
+            return null;
         }
 
 

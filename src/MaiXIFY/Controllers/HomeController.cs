@@ -29,9 +29,15 @@ namespace MaiXIFY.Controllers
 
             if (userId == null) {
                 ViewData["Message"] = "Nincs felhasználó kiválasztva!";
-                return View ();
-            } else
-                playlists = _spotifyEndpointAccessor.GetUserPlaylists (userId);
+                return View();
+            }
+            else {
+                SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyUser selectedUser = _spotifyEndpointAccessor.GetUserProfile (userId);
+                if (selectedUser == null)
+                    return Json (new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError (404, "No such user"));
+
+                playlists = _spotifyEndpointAccessor.GetUserPlaylists(userId);
+            }
 
             return Json (playlists);
         }
@@ -45,8 +51,11 @@ namespace MaiXIFY.Controllers
                 ViewData["Message"] = "Nincs felhasználó/playlist kiválasztva!";
                 return View ();
             }
-            else
-                playlist = _spotifyEndpointAccessor.GetPlaylist (userId, playlistId);
+            else {
+                playlist = _spotifyEndpointAccessor.GetPlaylist(userId, playlistId);
+                if (playlist == null)
+                    return Json (new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError (404, "Not found/Invalid playlist Id"));
+            }
 
             return Json (playlist);
         }
@@ -62,11 +71,11 @@ namespace MaiXIFY.Controllers
             // TODO majd torolni csak teszteles miatt van itt
             SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem pl1 = new SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem ();
             pl1.UserId = "gerawba";
-            pl1.PlaylistId = "47VN6Xbly3m0n77coFlFV9";
+            pl1.PlaylistId = "6VOydczE7fWoHEaND4qqPB";
 
             SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem pl2 = new SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem ();
             pl2.UserId = "gerawba";
-            pl2.PlaylistId = "6VOydczE7fWoHEaND4qqPB";
+            pl2.PlaylistId = "39MeZVlDFLiJcCRNWrkwmN";
 
             selectedPlaylists.Add(pl1);
             selectedPlaylists.Add(pl2);
@@ -86,7 +95,7 @@ namespace MaiXIFY.Controllers
             if (playlistName == null || playlistName == "")
                 playlistName = SpotifyWebAPIWrapper.SpotifyHelpers.MakeDefaultPlaylistName ();
 
-            SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist generatedPlaylist = mixer.GenerateRecommendedPlaylist (selectedPlaylistsObject, playlistName, isPublic, isCollaborative);
+            SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist generatedPlaylist = mixer.GenerateMaixifyPlaylist (selectedPlaylistsObject, playlistName, isPublic, isCollaborative);
 
             return Json (generatedPlaylist);
         }

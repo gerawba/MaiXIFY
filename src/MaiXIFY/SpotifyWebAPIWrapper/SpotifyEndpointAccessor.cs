@@ -40,6 +40,20 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         }
 
 
+        public SpotifyUser GetUserProfile (string userId)
+        {
+            var client = GetSpotifyHttpClient ();
+
+            var response = client.GetAsync (baseUrl + usersUrl + userId).Result;
+
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            var responseContent = response.Content.ReadAsStringAsync ().Result;
+            return JsonConvert.DeserializeObject<SpotifyUser> (responseContent);
+        }
+
+
         public SpotifyTrack GetTrack (string trackId)
         {
             if (trackId == null)
