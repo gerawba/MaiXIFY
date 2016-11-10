@@ -20,7 +20,7 @@ namespace MaiXIFY.Controllers
 
         public IActionResult Index ()
         {
-            string scope = "playlist-modify-public playlist-modify-private";
+            string scope = "user-read-private playlist-read-private playlist-modify-public playlist-modify-private";
 
             return Redirect (_spotifyAuthorization.RequestAuthorization (scope, HttpContext));
         }

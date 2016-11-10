@@ -36,7 +36,9 @@ namespace MaiXIFY.Controllers
                 if (selectedUser == null)
                     return Json (new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError (404, "No such user"));
 
-                playlists = _spotifyEndpointAccessor.GetUserPlaylists(userId);
+                playlists = _spotifyEndpointAccessor.GetUserPlaylists (userId);
+                if (playlists == null)
+                    return Json (new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError (503, "Cannot get playlists"));
             }
 
             return Json (playlists);
@@ -52,9 +54,9 @@ namespace MaiXIFY.Controllers
                 return View ();
             }
             else {
-                playlist = _spotifyEndpointAccessor.GetPlaylist(userId, playlistId);
+                playlist = _spotifyEndpointAccessor.GetPlaylist (userId, playlistId);
                 if (playlist == null)
-                    return Json (new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError (404, "Not found/Invalid playlist Id"));
+                    return Json (new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError (404, "Not found/Invalid user or playlist id"));
             }
 
             return Json (playlist);
@@ -64,8 +66,7 @@ namespace MaiXIFY.Controllers
         public IActionResult GeneratePlaylist (List<SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem> selectedPlaylists, string playlistName, bool isPublic, bool isCollaborative)
         {
             //if (selectedPlaylists.Count < 2) {
-            //    ViewData["Message"] = "Nincs legalább 2 playlist kiválasztva!";
-            //    return View ();
+            //    return Json (new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError (400, "Bad request (minimum selected playlist number: 2)"));
             //}
 
             // TODO majd torolni csak teszteles miatt van itt
@@ -96,6 +97,8 @@ namespace MaiXIFY.Controllers
                 playlistName = SpotifyWebAPIWrapper.SpotifyHelpers.MakeDefaultPlaylistName ();
 
             SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist generatedPlaylist = mixer.GenerateMaixifyPlaylist (selectedPlaylistsObject, playlistName, isPublic, isCollaborative);
+            if (generatedPlaylist == null)
+                return Json (new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError (400, "Bad request (cannot make playlist with the given settings)"));
 
             return Json (generatedPlaylist);
         }

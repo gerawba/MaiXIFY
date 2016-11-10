@@ -13,5 +13,8 @@ namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
 
         [JsonProperty (PropertyName = "display_name")]
         public string DisplayName { get; set; }
+
+        [JsonProperty(PropertyName = "country")]
+        public string Country { get; set; }
     }
 }

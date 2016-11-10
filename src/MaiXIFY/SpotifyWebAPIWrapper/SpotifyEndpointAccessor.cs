@@ -12,6 +12,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
     {
         private static string baseUrl = "https://api.spotify.com";
         private static string usersUrl = "/v1/users/";
+        private static string artistsUrl = "/v1/artists/";
         private static string tracksUrl = "/v1/tracks/";
 
         public static string AuthorizationHeader
@@ -71,6 +72,23 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         }
 
 
+        public List<SpotifyTrack> GetArtistsTopTracks (string artistId)
+        {
+            if (artistId == null)
+                return null;
+
+            var client = GetSpotifyHttpClient ();
+
+            var response = client.GetAsync (baseUrl + artistsUrl + artistId + "/top-tracks?country=" + GetCurrentUserProfile ().Country).Result;
+
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            var responseContent = response.Content.ReadAsStringAsync ().Result;
+            return JsonConvert.DeserializeObject<SpotifyTrack.SpotifyTracksList> (responseContent).Tracks;
+        }
+
+
         public List<SpotifyPlaylistSimplified> GetUserPlaylists (string userId)
         {
             if (userId == null)
@@ -86,9 +104,10 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
             var responseContent = response.Content.ReadAsStringAsync ().Result;
             var userPlaylistsPaging = JsonConvert.DeserializeObject<SpotifyPaging<SpotifyPlaylistSimplified>> (responseContent);
 
-            var playlistsNumber = userPlaylistsPaging.TotalItemNumbers > 20 ? 20 : userPlaylistsPaging.TotalItemNumbers;     //because paging
+            //because paging
+            var playlistsNumber = userPlaylistsPaging.TotalItemNumbers > 20 ? 20 : userPlaylistsPaging.TotalItemNumbers;
 
-            List<SpotifyPlaylistSimplified> userPlaylists = new List<SpotifyPlaylistSimplified>();
+            List<SpotifyPlaylistSimplified> userPlaylists = new List<SpotifyPlaylistSimplified> ();
             for (int i = 0; i < playlistsNumber; ++i)
                 userPlaylists.Add (userPlaylistsPaging.Items[i]);
 

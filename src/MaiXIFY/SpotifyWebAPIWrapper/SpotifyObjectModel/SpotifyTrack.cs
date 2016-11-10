@@ -22,5 +22,12 @@ namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
 
         [JsonProperty(PropertyName = "uri")]
         public string Uri { get; set; }
+
+
+        public class SpotifyTracksList
+        {
+            [JsonProperty(PropertyName = "tracks")]
+            public List<SpotifyTrack> Tracks { get; set; }
+        }
     }
 }

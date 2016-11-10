@@ -14,6 +14,8 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 
         SpotifyTrack GetTrack (string trackId);
 
+        List<SpotifyTrack> GetArtistsTopTracks (string artistId);
+
         List<SpotifyPlaylistSimplified> GetUserPlaylists (string userId);
 
         SpotifyPlaylist GetPlaylist (string userId, string playlistId);

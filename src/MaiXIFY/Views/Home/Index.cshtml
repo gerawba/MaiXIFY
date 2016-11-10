@@ -94,7 +94,7 @@ Please select how do you want to add playlists:
                 cache: false,
                 success: function (playlists) {
                     usersPlaylists = playlists;
-                    if (usersPlaylists.hasOwnProperty('errorCode') && usersPlaylists.errorCode == 404) {
+                    if (usersPlaylists.hasOwnProperty('errorCode') && (usersPlaylists.errorCode == 404 || usersPlaylists.errorCode == 503)) {
                         alert('No such Spotify user!')
                         return;
                     }

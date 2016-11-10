@@ -57,8 +57,6 @@ namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
                 }
             }
 
-
-
             List<KeyValuePair<string, SpotifyHelpers.TrackInfo>> sortedTracks = new List<KeyValuePair<string, SpotifyHelpers.TrackInfo>> ();
             if (Settings.SortOption == PlaylistMixerSettings.SortOptions.MostHit)
                 sortedTracks = tracksFrequency.OrderByDescending (t => t.Value.HitCount).ToList ();
@@ -79,7 +77,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
                 if (Settings.RecommendedMusic == false)
                     return null;
                 else {
-                    recommendedTrackUriList = GenerateRecommendedPlaylist (sortedTracks);
+                    recommendedTrackUriList = GenerateRecommendedPlaylist (sortedTracks, artistsFrequency);
                 }
             }
 
@@ -93,12 +91,38 @@ namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
         }
 
 
-        private List<String> GenerateRecommendedPlaylist (List<KeyValuePair<string, SpotifyHelpers.TrackInfo>> gatheredTracks)
+        private List<string> GenerateRecommendedPlaylist (List<KeyValuePair<string, SpotifyHelpers.TrackInfo>> gatheredTracks, Dictionary<string, int> artistsFrequency)
         {
-            //if (Settings.RecommendedMusic)
-            //    tracksPopularity = tracksPopularity.Distinct ().OrderByDescending (p => p.Value).ToList ();
+            if (gatheredTracks == null || artistsFrequency == null)
+                return null;
 
-            return null;
+            List<string> recommendedTrackUriList = new List<string> ();
+
+            // add some tracks from user's playlists if it is poupular (>77) right now
+            gatheredTracks = gatheredTracks.Distinct ().OrderByDescending (p => p.Value.Popularity).ToList ();
+            foreach (var track in gatheredTracks) {
+                if (track.Value.Popularity > 77)
+                    recommendedTrackUriList.Add (SpotifyHelpers.trackUri + track.Key);
+            }
+
+            // add the top 3 tracks from user's playlists most frequent artists
+            int topArtistsFrequencyLimit = (from artist in artistsFrequency
+                                            orderby artist.Value descending
+                                            select artist.Value).Distinct ().Skip (2).First ();
+
+            if (topArtistsFrequencyLimit < 2)
+                return recommendedTrackUriList;
+
+            List<string> topArtists = artistsFrequency.Where (a => (a.Value >= topArtistsFrequencyLimit)).Select (a => a.Key).ToList ();
+
+            List<SpotifyTrack> topArtistsMostPopularTracks = new List<SpotifyTrack> ();
+            foreach (string artist in topArtists)
+                topArtistsMostPopularTracks.AddRange (_spotifyEndpointAccessor.GetArtistsTopTracks (artist).Take (3));
+
+            foreach (var track in topArtistsMostPopularTracks) 
+                    recommendedTrackUriList.Add (SpotifyHelpers.trackUri + track.Id);
+
+            return recommendedTrackUriList.Distinct ().ToList ();
         }
 
 
