@@ -1,73 +1,128 @@
 ﻿@{
     ViewData["Title"] = "MaiXIFY";
 }
-
 <h1 align="center"></h1>
-
 <h2>Welcome to the MaiXIFY web application! Here you can create mixed Spotify playlists based on different Spotify playlists.</h2>
 <br />
-Please select how do you want to add playlists:
-<br />
-<input id="playlistID" type="radio" name="mode" value="playlistID" onclick="playlistIDModeSelected()"> Paste Spotify playlist's ID
-<input id="spotifyUser" type="radio" name="mode" value="spotifyUser" onclick="spotifyUserModeSelected()"> Select playlists from Spotify user profile<br>
-<br />
+<div id="divForSelectedPlaylists" style="display:none"><h3>Selected playlists:</h3><br /><button type="button" onclick="MaiXIFY()">MaiXIFY</button><br /><br /></div>
 <div id="formDiv">
-    <div id="playlistForm" style="display:none">
-        Playlist ID:<br>
-        <input id="playlistIDInput" type="text" name="playlistIDInput" size="200" value="">
+    <div id="divForSelectedPlaylists" style="display:none"></div>
+    <div id="playlistForm" style="display:inline-block">
+        <div id="playlistFormDiv" style="display:block">
+            Playlist URL:
+            <input id="playlistIdInput" type="text" name="playlistIdInput" size="200" value="">
+            <button type="button" onclick="getPlaylistByURL()">Get playlist</button>
+            <br />
+            <br />
+        </div>
+        <div id="divForSinglePlaylist" name="divForSinglePlaylist" style="display:none"></div>
     </div>
-    <div id="spotifyUserForm" style="display:none">
-        Spotify user name:<br>
+    <hr>
+    <div id="spotifyUserForm">
+        Spotify user name:
         <input id="spotifyUserInput" type="text" name="spotifyUserInput" size="100" value="">
         <button type="button" onclick="getPlaylists()">Get Playlists</button>
-        <hr>
+        <br />
         <br />
     </div>
 </div>
-
 <script src="/js/handlebars-v4.0.5.js"></script>
-
 <script>
 
     var selectedPlaylists = new Array();
-    var usersPlaylists;
+    var usersPlaylists = new Array();
+    var queriedPlaylistFromUrl;
 
-    window.onload = function () {
-        onLoadFunction();
-    };
+    function MaiXIFY() {
 
-    function onLoadFunction() {
-        $("#playlistID").prop("checked", false);
-        $("#spotifyUser").prop("checked", false);
+    
     }
 
-    function playlistIDModeSelected() {
-        $('#playlistForm').show();
-        $('#spotifyUserForm').hide();
-        $('#divForPlaylists').remove();
-        $('#spotifyUserInput').val('');
-    }
-
-    function spotifyUserModeSelected() {
-        $('#playlistForm').hide();
-        $('#spotifyUserForm').show();
-        $('#playlistIDInput').val('');
-    }
-
-    function selectUserPlaylist(id) {
-        var playlist = { userId: "", playlistId: "" };
-        playlist.userId = usersPlaylists[id].owner.id;
-        playlist.playlistId = usersPlaylists[id].id;
-        if (selectedPlaylistContainsPlaylist(playlist.playlistId) == false) {
-            selectedPlaylists.push(playlist);
-            document.getElementById(id).innerHTML = "Remove";
+    function isTheSelectedPlaylistsListEmpty() {
+        if (selectedPlaylists.length == 0) {
+            return true;
         }
         else {
-            var index = selectedPlaylists.indexOf(playlist);
-            selectedPlaylists.splice(index, 1);
-            document.getElementById(id).innerHTML = "Add";
+            return false;
         }
+
     }
+
+    function selectUserPlaylist(playlisId) {
+        var id;
+        var playlist = { userId: "", playlistId: "", uri: "", name: "" };
+        for (i = 0; i < usersPlaylists.length; i++) {
+            if (usersPlaylists[i].id == playlisId) {
+                id = i;
+            }
+        }
+        playlist.userId = usersPlaylists[id].owner.id;
+        playlist.playlistId = usersPlaylists[id].id;
+        playlist.uri = usersPlaylists[id].uri;
+        playlist.name = usersPlaylists[id].name;
+        if (selectedPlaylistContainsPlaylist(playlist.playlistId) == false) {
+            selectedPlaylists.push(playlist);
+            document.getElementById(playlist.name).innerHTML = "Remove";
+        }
+        else {
+            for (i = 0; i < selectedPlaylists.length; i++) {
+                if (selectedPlaylists[i].playlistId == playlisId) {
+                    selectedPlaylists.splice(i, 1);
+                    document.getElementById(playlist.name).innerHTML = "Add";
+                }
+            }
+        }
+        document.getElementById("divForSinglePlaylist").style.display = "none";
+        $("#divForSinglePlaylistFromUrl").remove();
+        displayPlaylists();       
+    }
+
+    function displayPlaylists() {
+        if (!(isTheSelectedPlaylistsListEmpty())) {
+            if (document.getElementById("divForPlaylistsFromSelectedList")) {
+                $("#divForPlaylistsFromSelectedList").remove();
+            }
+            var divForPlaylistsFromSelectedList = '<div id=' + "\"" + "divForPlaylistsFromSelectedList" + "\"" + "style=" + "\"" + "display:inline-block" + "\"" + ">";
+            $("#divForSelectedPlaylists").append(divForPlaylistsFromSelectedList);
+            document.getElementById("divForSelectedPlaylists").style.display = "inline-block";
+            document.getElementById("divForSelectedPlaylists").style.overflowX = "auto";
+            document.getElementById("divForSelectedPlaylists").style.whiteSpace = "nowrap";
+            document.getElementById("divForSelectedPlaylists").style.width = "1000px";
+            for (i = 0; i < selectedPlaylists.length; i++) {
+                var playlistIdParameter = selectedPlaylists[i].playlistId;
+                var src = "https://embed.spotify.com/?uri=" + selectedPlaylists[i].uri;
+                var playlistElement = '<div ' + 'id=' + "\"" + "divForUserSelectedPlaylists" + "\"" + "style=" + "\"" + "display:inline-block; width: 350px; height: 500px;" + "\"" + ">" + "<p>" + '<button type=' + "\"" + "button" + "\"" + 'id=' + "\"" + "removeFromSelectedPlaylistsButton" + "\"" + " onclick=" + "\"" + "removeFromFromSelectedPlaylists(" + '\'' + playlistIdParameter + '\'' + ")" + "\"" + '>Remove</button>' + "<b>" + "  " + selectedPlaylists[i].name + "</b>" + "</p>"
+                                        + '<iframe src=' + "\"" + src + "\"" + 'width="300" height="380" frameborder="0" allowtransparency="true" ></iframe>' +
+                                        "</div>";
+                $("#divForPlaylistsFromSelectedList").append(playlistElement);
+            }
+        }
+        else {
+            if (document.getElementById("divForPlaylistsFromSelectedList")) {
+                $("#divForPlaylistsFromSelectedList").remove();
+            }
+            document.getElementById("divForSelectedPlaylists").style.display = "none";
+        }
+
+    }
+    function removeFromFromSelectedPlaylists(playlistId) {
+        for (i = 0; i < selectedPlaylists.length; i++) {
+            if (selectedPlaylists[i].playlistId == playlistId) {
+                selectedPlaylists.splice(i, 1);
+                document.getElementById("divForSinglePlaylist").style.display = "none";
+                $("#divForSinglePlaylistFromUrl").remove();
+                break;
+            }
+        }
+        for (i = 0; i < usersPlaylists.length; i++) {
+            if (usersPlaylists[i].id == playlistId) {
+                document.getElementById(usersPlaylists[i].name).innerHTML = "Add";
+                break;
+            }
+        }
+        displayPlaylists();
+    }
+
 
     function selectedPlaylistContainsPlaylist(id) {
         var contains = false;
@@ -80,8 +135,99 @@ Please select how do you want to add playlists:
         return contains;
     }
 
+    function selectPlaylistFromUrl() {
+        var playlist = { userId: "", playlistId: "", uri: "", name:"" };
+        playlist.userId = queriedPlaylistFromUrl.owner.id;
+        playlist.playlistId = queriedPlaylistFromUrl.id;
+        playlist.uri = queriedPlaylistFromUrl.uri;
+        playlist.name = queriedPlaylistFromUrl.name;
+        selectedPlaylists.push(playlist);
+        document.getElementById("divForSinglePlaylist").style.display = "none";
+        $("#divForSinglePlaylistFromUrl").remove();
+        if (usersPlaylists != null) {
+            for (i = 0; i < usersPlaylists.length; i++) {
+                if (usersPlaylists[i].id == playlist.playlistId) {
+                    document.getElementById(usersPlaylists[i].name).innerHTML = "Remove";
+                    break;
+                }
+            }
+        }
+        displayPlaylists();
+    }
+    function finishAdding() {
+        $('#divForPlaylists').remove();
+
+    }
+
+
+    function isPlaylistAlreadySelected(userId, playlistId) {
+        var contains = false;
+        for (var i = 0; i < selectedPlaylists.length; i++) {
+            if (selectedPlaylists[i].playlistId == playlistId && selectedPlaylists[i].userId == userId) {
+                contains = true;
+                break;
+            }
+        }
+        return contains;
+    }
+
+    function getPlaylistByURL() {
+        var URL = $('#playlistIdInput').val();
+        $('#playlistIdInput').val('');
+
+        if (!($("#divForSinglePlaylist").length === 0)) {
+            $("#divForSinglePlaylistFromUrl").remove();
+        }
+
+        var playlistPosition = URL.search("/playlist/");
+        var playlistPartOfTheURL = URL.slice(playlistPosition, URL.length);
+        var playlistId = URL.slice(playlistPosition + 10, URL.length);
+        var userId = URL.slice(URL.search("/user/") + 6, playlistPosition);
+        var userCountInURL = (URL.match(/\/user\//g) || []).length;
+        var playlistCountInURL = (URL.match(/\/playlist\//g) || []).length;
+
+        if (!(URL.startsWith("https://open.spotify.com/user/") || URL.startsWith("https://play.spotify.com/user/")) || playlistId.length != 22 || userCountInURL != 1 || playlistCountInURL != 1 || userId.length <= 0) {
+            alert('The playlist URL is not correct!');
+        }
+        else {
+
+
+            $.ajax({
+                url: '@Url.Action("GetPlaylist")',
+                data: { 'userId': userId, 'playlistId': playlistId },
+                type: "post",
+                cache: false,
+                success: function (playlist) {
+                    queriedPlaylistFromUrl = playlist;
+                    if (queriedPlaylistFromUrl.hasOwnProperty('errorCode') && (queriedPlaylistFromUrl.errorCode == 404 || queriedPlaylistFromUrl.errorCode == 503)) {
+                        alert('No such Spotify playlist!')
+                        return;
+                    }
+
+                    if (isPlaylistAlreadySelected(userId, playlistId)) {
+                        alert('This playlist is already selected! Please select a different playlist or remove the playlist from your selected playlists!');
+                        return;
+                    }
+
+                    document.getElementById("divForSinglePlaylist").style.display = "inline-block";
+                    var src = "https://embed.spotify.com/?uri=" + queriedPlaylistFromUrl.uri;
+                    var playlistElement = '<div ' + 'id=' + "\"" + "divForSinglePlaylistFromUrl" + "\"" + "style=" + "\"" + "display:inline-block; width: auto; height: auto;" + "\"" + ">" + "<p>" + '<button type=' + "\"" + "button" + "\"" + 'id=' + "\"" + "addPlaylistFromUrlButton" + "\"" + " onclick=" + "\"" + "selectPlaylistFromUrl()" + "\"" + '>Add</button>' + "<b>" + "  " + queriedPlaylistFromUrl.name + "</b>" + "</p>"
+                                            + '<iframe src=' + "\"" + src + "\"" + 'width="300" height="380" frameborder="0" allowtransparency="true" ></iframe>' +
+                                            "</div>";
+                    $("#divForSinglePlaylist").append(playlistElement);
+
+                }
+            });
+
+
+        }
+
+
+    }
+
     function getPlaylists() {
         var spotifyUserName = $('#spotifyUserInput').val();
+        $('#spotifyUserInput').val('');
         $('#divForPlaylists').remove();
         if (spotifyUserName.length <= 0) {
             alert('Please add a Spotify username!')
@@ -99,17 +245,20 @@ Please select how do you want to add playlists:
                         return;
                     }
 
-                    var divForPlaylists = '<div id=' + "\"" + "divForPlaylists" + "\"" + "style=" + "\"" + "display:inline-block" + "\"" + ">";
+                    var divForPlaylists = '<div id=' + "\"" + "divForPlaylists" + "\"" + "style=" + "\"" + "display:inline-block" + "\"" + ">" + '<button type=' + "\"" + "button" + "\"" + "style=" + "\"" + "display:block" + "\""  + 'id=' + "finishAddingUsersPlaylistsButton" + " onclick=" + "\"" + "finishAdding()" + "\"" + '>Finish</button><br>';
                     $("#spotifyUserForm").append(divForPlaylists);
                     for (i = 0; i < usersPlaylists.length; i++) {
                         var src = "https://embed.spotify.com/?uri=" + usersPlaylists[i].uri;
-                        var playlistElement = '<div ' + 'id=' + "\"" + "divForSinglePlaylists" + "\"" + "style=" + "\"" + "display:inline-block; width: 350px; height: 500px;" + "\"" + ">" + "<p>" + '<button type=' + "\"" + "button" + "\"" + 'id=' + "\"" + i + "\"" + " onclick=" + "\"" + "selectUserPlaylist(id)" + "\"" + '>Add</button>' + "<b>" + "  " + usersPlaylists[i].name + "</b>" + "</p>"
-                                                + '<iframe src=' + "\"" + src + "\"" + 'width="300" height="380" frameborder="0" allowtransparency="true" id=' + "\"" + i + "\"" + ' onclick=' + "\"" + "selectUserPlaylist(id)" + "\"" + ' ></iframe>'  +
+                        var playlistElement = '<div ' + 'id=' + "\"" + "divForSinglePlaylists" + "\"" + "style=" + "\"" + "display:inline-block; width: 350px; height: 500px;" + "\"" + ">" + "<p>" + '<button type=' + "\"" + "button" + "\"" + 'id=' + "\"" + usersPlaylists[i].name + "\"" + " onclick=" + "\"" + "selectUserPlaylist(" + '\'' + usersPlaylists[i].id + '\'' + ")" + "\"" + '>Add</button>' + "<b>" + "  " + usersPlaylists[i].name + "</b>" + "</p>"
+                                                + '<iframe src=' + "\"" + src + "\"" + 'width="300" height="380" frameborder="0" allowtransparency="true" id=' + "\"" + i + "\"" + ' onclick=' + "\"" + "selectUserPlaylist(id)" + "\"" + ' ></iframe>' +
                                                 "</div>";
                         $("#divForPlaylists").append(playlistElement);
+                        if(selectedPlaylistContainsPlaylist(usersPlaylists[i].id))
+                            document.getElementById(usersPlaylists[i].name).innerHTML = "Remove";
+
                     }
                 }
             });
         }
-    }
+    } 
 </script>
