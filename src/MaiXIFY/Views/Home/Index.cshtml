@@ -3,18 +3,18 @@
 }
 <h1 align="center"></h1>
 <h2>
-    Hey @ViewData["UserName"], welcome to MaiXIFY!<br /><br />
+    Hey, welcome to MaiXIFY!<br /><br />
     Just select some Spotify playlist below, and enjoy your new mixed playlist!
 </h2>
 <br />
-<div id="divForSelectedPlaylists" style="display:none"><h3>Selected playlists:</h3><br /><button type="button" onclick="MaiXIFY()">MaiXIFY it!</button><br /><br /></div>
+<div id="divForSelectedPlaylists" style="display:none"><h3>Selected playlists:</h3><br /><button type="button" class="btn btn-sm btn-default" onclick="MaiXIFY()">MaiXIFY it!</button><br /><br /></div>
 <div id="formDiv">
     <div id="divForSelectedPlaylists" style="display:none"></div>
     <div id="playlistForm" style="display:inline-block">
         <div id="playlistFormDiv" style="display:block">
             Playlist URL:
             <input id="playlistIdInput" type="text" name="playlistIdInput" size="200" value="">
-            <button type="button" onclick="getPlaylistByURL()">Get playlist</button>
+            <button type="button" class="btn btn-sm btn-primary" onclick="getPlaylistByURL()">Get playlist</button>
             <br />
             <br />
         </div>
@@ -24,7 +24,7 @@
     <div id="spotifyUserForm">
         Spotify user name:
         <input id="spotifyUserInput" type="text" name="spotifyUserInput" size="100" value="">
-        <button type="button" onclick="getPlaylists()">Get Playlists</button>
+        <button type="button" class="btn btn-sm btn-primary" onclick="getPlaylists()">Get Playlists</button>
         <br />
         <br />
     </div>
@@ -68,12 +68,14 @@
         if (selectedPlaylistContainsPlaylist(playlist.playlistId) == false) {
             selectedPlaylists.push(playlist);
             document.getElementById(playlist.name).innerHTML = "Remove";
+            document.getElementById(playlist.name).className = "btn btn-sm btn-danger";
         }
         else {
             for (i = 0; i < selectedPlaylists.length; i++) {
                 if (selectedPlaylists[i].playlistId == playlisId) {
                     selectedPlaylists.splice(i, 1);
                     document.getElementById(playlist.name).innerHTML = "Add";
+                    document.getElementById(playlist.name).className = "btn btn-sm btn-primary";
                 }
             }
         }
@@ -97,7 +99,7 @@
             for (i = 0; i < selectedPlaylists.length; i++) {
                 var playlistIdParameter = selectedPlaylists[i].playlistId;
                 var src = "https://embed.spotify.com/?uri=" + selectedPlaylists[i].uri;
-                var playlistElement = '<div ' + 'id=' + "\"" + "divForUserSelectedPlaylists" + "\"" + "style=" + "\"" + "display:inline-block; width: 350px; height: 500px;" + "\"" + ">" + "<p>" + '<button type=' + "\"" + "button" + "\"" + 'id=' + "\"" + "removeFromSelectedPlaylistsButton" + "\"" + " onclick=" + "\"" + "removeFromFromSelectedPlaylists(" + '\'' + playlistIdParameter + '\'' + ")" + "\"" + '>Remove</button>' + "<b>" + "  " + selectedPlaylists[i].name + "</b>" + "</p>"
+                var playlistElement = '<div ' + 'id=' + "\"" + "divForUserSelectedPlaylists" + "\"" + "style=" + "\"" + "display:inline-block; width: 350px; height: 500px;" + "\"" + ">" + "<p>" + '<button type=' + "\"" + "button" + "\"" + 'id=' + "\"" + "removeFromSelectedPlaylistsButton" + "\"" + "class=" + "\"" + "btn btn-sm btn-danger" + "\"" + " onclick=" + "\"" + "removeFromFromSelectedPlaylists(" + '\'' + playlistIdParameter + '\'' + ")" + "\"" + '>Remove</button>' + "<b>" + "  " + selectedPlaylists[i].name + "</b>" + "</p>"
                                         + '<iframe src=' + "\"" + src + "\"" + 'width="300" height="380" frameborder="0" allowtransparency="true" ></iframe>' +
                                         "</div>";
                 $("#divForPlaylistsFromSelectedList").append(playlistElement);
@@ -216,7 +218,7 @@
 
                     document.getElementById("divForSinglePlaylist").style.display = "inline-block";
                     var src = "https://embed.spotify.com/?uri=" + queriedPlaylistFromUrl.uri;
-                    var playlistElement = '<div ' + 'id=' + "\"" + "divForSinglePlaylistFromUrl" + "\"" + "style=" + "\"" + "display:inline-block; width: auto; height: auto;" + "\"" + ">" + "<p>" + '<button type=' + "\"" + "button" + "\"" + 'id=' + "\"" + "addPlaylistFromUrlButton" + "\"" + " onclick=" + "\"" + "selectPlaylistFromUrl()" + "\"" + '>Add</button>' + "<b>" + "  " + queriedPlaylistFromUrl.name + "</b>" + "</p>"
+                    var playlistElement = '<div ' + 'id=' + "\"" + "divForSinglePlaylistFromUrl" + "\"" + "style=" + "\"" + "display:inline-block; width: auto; height: auto;" + "\"" + ">" + "<p>" + '<button type=' + "\"" + "button" + "\"" + 'id=' + "\"" + "addPlaylistFromUrlButton" + "\"" + "class=" + "\"" + "btn btn-sm btn-primary" + "\"" +  " onclick=" + "\"" + "selectPlaylistFromUrl()" + "\"" + '>Add</button>' + "<b>" + "  " + queriedPlaylistFromUrl.name + "</b>" + "</p>"
                                             + '<iframe src=' + "\"" + src + "\"" + 'width="300" height="380" frameborder="0" allowtransparency="true" ></iframe>' +
                                             "</div>";
                     $("#divForSinglePlaylist").append(playlistElement);
@@ -251,7 +253,7 @@
                     $("#spotifyUserForm").append(divForPlaylists);
                     for (i = 0; i < usersPlaylists.length; i++) {
                         var src = "https://embed.spotify.com/?uri=" + usersPlaylists[i].uri;
-                        var playlistElement = '<div ' + 'id=' + "\"" + "divForSinglePlaylists" + "\"" + "style=" + "\"" + "display:inline-block; width: 350px; height: 500px;" + "\"" + ">" + "<p>" + '<button type=' + "\"" + "button" + "\"" + 'id=' + "\"" + usersPlaylists[i].name + "\"" + " onclick=" + "\"" + "selectUserPlaylist(" + '\'' + usersPlaylists[i].id + '\'' + ")" + "\"" + '>Add</button>' + "<b>" + "  " + usersPlaylists[i].name + "</b>" + "</p>"
+                        var playlistElement = '<div ' + 'id=' + "\"" + "divForSinglePlaylists" + "\"" + "style=" + "\"" + "display:inline-block; width: 350px; height: 500px;" + "\"" + ">" + "<p>" + '<button type=' + "\"" + "button" + "\"" + 'id=' + "\"" + usersPlaylists[i].name + "\"" + "class=" + "\"" + "btn btn-sm btn-primary" + "\"" + " onclick=" + "\"" + "selectUserPlaylist(" + '\'' + usersPlaylists[i].id + '\'' + ")" + "\"" + '>Add</button>' + "<b>" + "  " + usersPlaylists[i].name + "</b>" + "</p>"
                                                 + '<iframe src=' + "\"" + src + "\"" + 'width="300" height="380" frameborder="0" allowtransparency="true" id=' + "\"" + i + "\"" + ' onclick=' + "\"" + "selectUserPlaylist(id)" + "\"" + ' ></iframe>' +
                                                 "</div>";
                         $("#divForPlaylists").append(playlistElement);
