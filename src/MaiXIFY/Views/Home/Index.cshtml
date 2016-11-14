@@ -251,7 +251,7 @@
                         return;
                     }
 
-                    var divForPlaylists = '<div id=' + "\"" + "divForPlaylists" + "\"" + "style=" + "\"" + "display:inline-block" + "\"" + ">" + '<button type=' + "\"" + "button" + "\"" + "style=" + "\"" + "display:block" + "\""  + 'id=' + "finishAddingUsersPlaylistsButton" + " onclick=" + "\"" + "finishAdding()" + "\"" + '>Finish</button><br>';
+                    var divForPlaylists = '<div id=' + "\"" + "divForPlaylists" + "\"" + "style=" + "\"" + "display:inline-block" + "\"" + ">" + '<button type=' + "\"" + "button" + "\"" + "style=" + "\"" + "display:block" + "\"" + 'id=' + "finishAddingUsersPlaylistsButton" + "\"" + " class=" + "\"" + "btn btn-sm btn-default" + "\"" + " onclick=" + "\"" + "finishAdding()" + "\"" + '>Rid of them, and give a new Spotify user</button><br>';
                     $("#spotifyUserForm").append(divForPlaylists);
                     for (i = 0; i < usersPlaylists.length; i++) {
                         var src = "https://embed.spotify.com/?uri=" + usersPlaylists[i].uri;
