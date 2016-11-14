@@ -65,21 +65,9 @@ namespace MaiXIFY.Controllers
 
         public IActionResult GeneratePlaylist (List<SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem> selectedPlaylists, string playlistName, bool isPublic, bool isCollaborative)
         {
-            //if (selectedPlaylists.Count < 2) {
-            //    return Json (new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError (400, "Bad request (minimum selected playlist number: 2)"));
-            //}
-
-            // TODO majd torolni csak teszteles miatt van itt
-            SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem pl1 = new SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem ();
-            pl1.UserId = "gerawba";
-            pl1.PlaylistId = "6VOydczE7fWoHEaND4qqPB";
-
-            SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem pl2 = new SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem ();
-            pl2.UserId = "gerawba";
-            pl2.PlaylistId = "39MeZVlDFLiJcCRNWrkwmN";
-
-            selectedPlaylists.Add(pl1);
-            selectedPlaylists.Add(pl2);
+            if (selectedPlaylists.Count < 2) {
+                return Json(new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError(400, "Bad request (minimum selected playlist number: 2)"));
+            }
 
             List<SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist> selectedPlaylistsObject = _spotifyEndpointAccessor.GetPlaylists (selectedPlaylists);
 

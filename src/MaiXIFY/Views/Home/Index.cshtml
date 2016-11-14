@@ -35,8 +35,9 @@
 
     function MaiXIFY() {
 
-    
+   
     }
+
 
     function isTheSelectedPlaylistsListEmpty() {
         if (selectedPlaylists.length == 0) {
@@ -47,6 +48,7 @@
         }
 
     }
+
 
     function selectUserPlaylist(playlisId) {
         var id;
@@ -77,6 +79,7 @@
         displayPlaylists();       
     }
 
+
     function displayPlaylists() {
         if (!(isTheSelectedPlaylistsListEmpty())) {
             if (document.getElementById("divForPlaylistsFromSelectedList")) {
@@ -103,8 +106,9 @@
             }
             document.getElementById("divForSelectedPlaylists").style.display = "none";
         }
-
     }
+
+
     function removeFromFromSelectedPlaylists(playlistId) {
         for (i = 0; i < selectedPlaylists.length; i++) {
             if (selectedPlaylists[i].playlistId == playlistId) {
@@ -187,11 +191,9 @@
         var playlistCountInURL = (URL.match(/\/playlist\//g) || []).length;
 
         if (!(URL.startsWith("https://open.spotify.com/user/") || URL.startsWith("https://play.spotify.com/user/")) || playlistId.length != 22 || userCountInURL != 1 || playlistCountInURL != 1 || userId.length <= 0) {
-            alert('The playlist URL is not correct!');
+            alert('This is not a Spotify playlist URL!');
         }
         else {
-
-
             $.ajax({
                 url: '@Url.Action("GetPlaylist")',
                 data: { 'userId': userId, 'playlistId': playlistId },
@@ -199,7 +201,7 @@
                 cache: false,
                 success: function (playlist) {
                     queriedPlaylistFromUrl = playlist;
-                    if (queriedPlaylistFromUrl.hasOwnProperty('errorCode') && (queriedPlaylistFromUrl.errorCode == 404 || queriedPlaylistFromUrl.errorCode == 503)) {
+                    if (queriedPlaylistFromUrl.hasOwnProperty('errorCode') && queriedPlaylistFromUrl.errorCode == 404) {
                         alert('No such Spotify playlist!')
                         return;
                     }
@@ -218,12 +220,9 @@
 
                 }
             });
-
-
         }
-
-
     }
+
 
     function getPlaylists() {
         var spotifyUserName = $('#spotifyUserInput').val();
