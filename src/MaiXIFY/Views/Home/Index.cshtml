@@ -126,6 +126,7 @@
         for (i = 0; i < usersPlaylists.length; i++) {
             if (usersPlaylists[i].id == playlistId) {
                 document.getElementById(usersPlaylists[i].name).innerHTML = "Add";
+                document.getElementById(usersPlaylists[i].name).className = "btn btn-sm btn-primary";
                 break;
             }
         }
@@ -157,6 +158,7 @@
             for (i = 0; i < usersPlaylists.length; i++) {
                 if (usersPlaylists[i].id == playlist.playlistId) {
                     document.getElementById(usersPlaylists[i].name).innerHTML = "Remove";
+                    document.getElementById(usersPlaylists[i].name).className = "btn btn-sm btn-danger";
                     break;
                 }
             }
@@ -257,9 +259,10 @@
                                                 + '<iframe src=' + "\"" + src + "\"" + 'width="300" height="380" frameborder="0" allowtransparency="true" id=' + "\"" + i + "\"" + ' onclick=' + "\"" + "selectUserPlaylist(id)" + "\"" + ' ></iframe>' +
                                                 "</div>";
                         $("#divForPlaylists").append(playlistElement);
-                        if(selectedPlaylistContainsPlaylist(usersPlaylists[i].id))
+                        if (selectedPlaylistContainsPlaylist(usersPlaylists[i].id)) {
                             document.getElementById(usersPlaylists[i].name).innerHTML = "Remove";
-
+                            document.getElementById(usersPlaylists[i].name).className = "btn btn-sm btn-danger";
+                        }
                     }
                 }
             });
