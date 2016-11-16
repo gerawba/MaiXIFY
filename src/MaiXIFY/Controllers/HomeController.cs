@@ -69,7 +69,7 @@ namespace MaiXIFY.Controllers
         public IActionResult GeneratePlaylist (List<SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem> selectedPlaylists, string playlistName, bool isPublic, bool isCollaborative)
         {
             if (selectedPlaylists.Count < 2) {
-                return Json(new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError(400, "Bad request (minimum selected playlist number: 2)"));
+                return RedirectToAction ("Error", new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError (400, "You have to select minimum 2 playlists!"));
             }
 
             List<SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist> selectedPlaylistsObject = _spotifyEndpointAccessor.GetPlaylists (selectedPlaylists);
@@ -89,33 +89,40 @@ namespace MaiXIFY.Controllers
 
             SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist generatedPlaylist = mixer.GenerateMaixifyPlaylist (selectedPlaylistsObject, playlistName, isPublic, isCollaborative);
             if (generatedPlaylist == null)
-                return Json (new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError (400, "Bad request (cannot make playlist with the given settings)"));
+                return RedirectToAction ("Error", new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError (400, "Cannot make playlist with the given settings!"));
 
-            return View("Maixified", generatedPlaylist);
+            return RedirectToAction ("Maixified", generatedPlaylist);
+        }
+
+
+        public IActionResult Maixified (SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist generatedPlaylist)
+        {
+            return View (generatedPlaylist);
+        }
+
+        public IActionResult Error (SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError error)
+        {
+            ViewData["Message"] = "Ooop! Something went wrong...";
+
+            if (error == null)
+                return View ();
+
+            ViewData["ErrorMessage"] = error.ErrorMessage;
+            return View ();
         }
 
 
         public IActionResult About ()
         {
-            var spotifyUserProfile = _spotifyEndpointAccessor.GetCurrentUserProfile ();
-            if (spotifyUserProfile == null)
-                ViewData["Message"] = "Hiba történt a GetCurrentProfile lekérésekor.";
-
-            ViewData["Message"] = spotifyUserProfile.DisplayName + spotifyUserProfile.Id;
+            ViewData["Message"] = userName;
             return View ();
         }
 
 
         public IActionResult Contact ()
         {
-            ViewData["Message"] = "Your contact page.";
+            ViewData["Message"] = "MaiXIFY contact page.";
 
-            return View ();
-        }
-
-
-        public IActionResult Error ()
-        {
             return View ();
         }
     }

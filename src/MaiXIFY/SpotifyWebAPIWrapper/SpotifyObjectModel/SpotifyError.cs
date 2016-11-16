@@ -14,6 +14,8 @@ namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
         [JsonProperty(PropertyName = "errorMessage")]
         public string ErrorMessage { get; set; }
 
+        public SpotifyError () { }
+
         public SpotifyError (int errorCode, string errorMessage)
         {
             ErrorCode = errorCode;
