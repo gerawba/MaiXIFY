@@ -38,6 +38,10 @@ namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
                 foreach (SpotifyPlaylistTrack playlistTrack in playlistTrackList) {
                     SpotifyTrack track = playlistTrack.Track;
                     string trackId = track.Id;
+
+                    if (trackId == null)
+                        continue;
+
                     string trackArtist = track.Artists[0].Id;
                     int trackPopularity = track.Popularity;
 
