@@ -12,13 +12,13 @@
     <br>
     <table>
         <tr>
-            <th style="padding:0 15px 0 15px;"><b>MaiXIFY ALGORITHM SETTINGS: </b></th>
-            <th style="padding:0 15px 0 15px;">Threshold:</th>
-            <th style="padding:0 15px 0 15px;"><input id="thresholdRange" name="thresholdRange" type="range" min="0" max="100" step="1" onchange="updateRangeValueInput(this.value);"></th>
-            <th style="padding:0 15px 0 15px;"><output id="thersholdLabel" name="thersholdLabel" value="50" text="50">50</output> % </th>
-            <th style="padding:0 15px 0 15px;"><input id="isRecommendedMusicSet" type="checkbox" name="isRecommendedMusicSet" value="RecommendedMusic">Recommended Music</th>
-            <th style="padding:0 15px 0 15px;">Sort options:</th>
-            <th style="padding:0 15px 0 15px;">
+            <th style="padding:0 15px 0 15px;white-space: nowrap;"><b>MaiXIFY SETTINGS:</b></th>
+            <th style="padding:0 15px 0 15px;white-space: nowrap;">Threshold:</th>
+            <th style="padding:0 15px 0 15px;white-space: nowrap;"><input id="thresholdRange" name="thresholdRange" type="range" min="0" max="100" step="1" onchange="updateRangeValueInput(this.value);"></th>
+            <th style="padding:0 15px 0 15px;white-space: nowrap;"><output id="thersholdLabel" name="thersholdLabel" value="50" text="50">50%</output></th>
+            <th style="padding:0 15px 0 15px;white-space: nowrap;"><input id="isRecommendedMusicSet" type="checkbox" name="isRecommendedMusicSet" value="RecommendedMusic">Add some plus recommended track</th>
+            <th style="padding:0 15px 0 15px;white-space: nowrap;">Sort options:</th>
+            <th style="padding:0 15px 0 15px;white-space: nowrap;">
                 <select id="sortOptionDropdownList" name="sortOptionDropdownList">
                     <option value="mostHit">Most Hit</option>
                     <option value="popularity">Popularity</option>
@@ -27,12 +27,12 @@
             </th>
         </tr>
         <tr>
-            <th style="padding:0 15px 0 15px;"><b>MaiXIFY SETTINGS: </b></th>
-            <th style="padding:0 15px 0 15px;">Mixed playlist's name: </th>
-            <th style="padding:0 15px 0 15px;"><input id="mixedPlaylistName" type="text" name="mixedPlaylistName" size="25" value=""></th>
-            <th style="padding:0 15px 0 15px;"><input id="isPublic" type="checkbox" name="isPublic" value="Public" checked>Public playlist</th>
-            <th style="padding:0 15px 0 15px;"><input id="isCollaborative" type="checkbox" name="isCollaborative" value="Collaborative">Collaborative</th>
-            <th></th>
+            <th style="padding:0 15px 0 15px;white-space: nowrap;"><b>PLAYLIST SETTINGS: </b></th>
+            <th style="padding:0 15px 0 15px;white-space: nowrap;"><input id="displayPlaylistNameField" type="checkbox" name="isNameRequired" value="isNameRequired" onclick="modifiePlaylistNameFields()">Playlist name</th>
+            <th id="thForPlaylistNameLabel" style="padding:0 15px 0 15px;display:none;white-space: nowrap;">Mixed playlist's name: </th>
+            <th id="thForPlaylistNameInput" style="padding:0 15px 0 15px;display:none;white-space: nowrap;"><input id="mixedPlaylistName" type="text" name="mixedPlaylistName" size="25" value=""></th>
+            <th style="padding:0 15px 0 15px;white-space: nowrap;"><input id="isPublic" type="checkbox" name="isPublic" value="Public" checked>Public</th>
+            <th style="padding:0 15px 0 15px;white-space: nowrap;"><input id="isCollaborative" type="checkbox" name="isCollaborative" value="Collaborative">Collaborative</th>
             <th></th>
         </tr>
     </table>
@@ -40,12 +40,13 @@
 <br />
 <div id="divForSelectedPlaylists" style="display:none"><h3>Selected playlists:</h3><br /></div>
 <div id="formDiv">
+    <hr id="hrForSelectedPlaylists" style="display:none">
     <div id="divForSelectedPlaylists" style="display:none"></div>
     <div id="playlistForm" style="display:inline-block">
         <div id="playlistFormDiv" style="display:block">
             Copy a Spotify playlist URL here:<br />
             <input id="playlistIdInput" type="text" name="playlistIdInput" size="200" value="">
-            <button type="button" class="btn btn-sm btn-primary" onclick="getPlaylistByURL()">Get playlist</button>
+            <button type="submit" id="getPlaylistButton" class="btn btn-sm btn-primary" onclick="getPlaylistByURL()">Get playlist</button>
             <br />
             <br />
         </div>
@@ -55,7 +56,7 @@
     <div id="spotifyUserForm">
         Or just give a Spotify user name:<br />
         <input id="spotifyUserInput" type="text" name="spotifyUserInput" size="100" value="">
-        <button type="button" class="btn btn-sm btn-primary" onclick="getPlaylists()">Get user playlists</button>
+        <button type="submit" id="getUserPlaylistsButton" class="btn btn-sm btn-primary" onclick="getPlaylists()">Get user playlists</button>
         <br />
         <br />
     </div>
@@ -63,12 +64,36 @@
 <script src="/js/handlebars-v4.0.5.js"></script>
 <script>
 
+    window.onload = (function () {
+        $("#playlistIdInput").keyup(function (event) {
+            if (event.keyCode == 13) {
+                $("#getPlaylistButton").click();
+            }
+        });
+
+        $("#spotifyUserInput").keyup(function (event) {
+            if (event.keyCode == 13) {
+                $("#getUserPlaylistsButton").click();
+            }
+        });
+    });    
+
     var selectedPlaylists = new Array();
     var usersPlaylists = new Array();
     var queriedPlaylistFromUrl;
 
+    function modifiePlaylistNameFields() {
+        if (document.getElementById('displayPlaylistNameField').checked) {
+            document.getElementById("thForPlaylistNameLabel").style.display = "block";
+            document.getElementById("thForPlaylistNameInput").style.display = "block";
+        } else {
+            document.getElementById("thForPlaylistNameLabel").style.display = "none";
+            document.getElementById("thForPlaylistNameInput").style.display = "none";
+        }
+    }
+
     function updateRangeValueInput(thresholdValue) {
-        document.getElementById('thersholdLabel').value = thresholdValue;
+        document.getElementById('thersholdLabel').value = thresholdValue + '%';
     }
 
     function MaiXIFY() {
@@ -87,11 +112,6 @@
             var playlistName = $('#mixedPlaylistName').val();
             var isPublic = document.getElementById('isPublic').checked;
             var isCollaborative = document.getElementById('isCollaborative').checked;
-
-            if (playlistName.length <= 0) {
-                alert('Please define a name for your playlist!');
-                return;
-            }
 
             var thresholdValue = (document.getElementById('thresholdRange').value / 100).toString();
             var recommendedMusic = document.getElementById('isRecommendedMusicSet').checked;
@@ -159,16 +179,17 @@
                 $("#divForPlaylistsFromSelectedList").remove();
             }
             var divForPlaylistsFromSelectedList = '<div id=' + "\"" + "divForPlaylistsFromSelectedList" + "\"" + "style=" + "\"" + "display:inline-block" + "\"" + ">";
-            $("#divForSelectedPlaylists").append(divForPlaylistsFromSelectedList);
+            $("#divForSelectedPlaylists").append(divForPlaylistsFromSelectedList);         
+            document.getElementById("hrForSelectedPlaylists").style.display = "block";
             document.getElementById("divForMaiXIFYButtonAndSettings").style.display = "inline-block";
             document.getElementById("divForSelectedPlaylists").style.display = "inline-block";
             document.getElementById("divForSelectedPlaylists").style.overflowX = "auto";
             document.getElementById("divForSelectedPlaylists").style.whiteSpace = "nowrap";
-            document.getElementById("divForSelectedPlaylists").style.width = "1000px";
+            document.getElementById("divForSelectedPlaylists").style.width = "1200px";
             for (i = 0; i < selectedPlaylists.length; i++) {
                 var playlistIdParameter = selectedPlaylists[i].playlistId;
                 var src = "https://embed.spotify.com/?uri=" + selectedPlaylists[i].uri;
-                var playlistElement = '<div ' + 'id=' + "\"" + "divForUserSelectedPlaylists" + "\"" + "style=" + "\"" + "display:inline-block; width: 350px; height: 500px;" + "\"" + ">" + "<p>" + '<button type=' + "\"" + "button" + "\"" + 'id=' + "\"" + "removeFromSelectedPlaylistsButton" + "\"" + "class=" + "\"" + "btn btn-sm btn-danger" + "\"" + " onclick=" + "\"" + "removeFromFromSelectedPlaylists(" + '\'' + playlistIdParameter + '\'' + ")" + "\"" + '>Remove</button>' + "<b>" + "  " + selectedPlaylists[i].name + "</b>" + "</p>"
+                var playlistElement = '<div ' + 'id=' + "\"" + "divForUserSelectedPlaylists" + "\"" + "style=" + "\"" + "display:inline-block; width: 350px; height: 500px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" + "\"" + ">" + "<p>" + '<button type=' + "\"" + "button" + "\"" + 'id=' + "\"" + "removeFromSelectedPlaylistsButton" + "\"" + "class=" + "\"" + "btn btn-sm btn-danger" + "\"" + " onclick=" + "\"" + "removeFromFromSelectedPlaylists(" + '\'' + playlistIdParameter + '\'' + ")" + "\"" + '>Remove</button>' + "<b>" + "  " + selectedPlaylists[i].name + "</b>" + "</p>"
                                         + '<iframe src=' + "\"" + src + "\"" + 'width="300" height="380" frameborder="0" allowtransparency="true" ></iframe>' +
                                         "</div>";
                 $("#divForPlaylistsFromSelectedList").append(playlistElement);
@@ -180,6 +201,7 @@
             }
             document.getElementById("divForSelectedPlaylists").style.display = "none";
             document.getElementById("divForMaiXIFYButtonAndSettings").style.display = "none";
+            document.getElementById("hrForSelectedPlaylists").style.display = "none";
         }
     }
 
@@ -222,22 +244,44 @@
         playlist.playlistId = queriedPlaylistFromUrl.id;
         playlist.uri = queriedPlaylistFromUrl.uri;
         playlist.name = queriedPlaylistFromUrl.name;
-        selectedPlaylists.push(playlist);
-        document.getElementById("divForSinglePlaylist").style.display = "none";
-        $("#divForSinglePlaylistFromUrl").remove();
-        if (usersPlaylists != null) {
-            for (i = 0; i < usersPlaylists.length; i++) {
-                if (usersPlaylists[i].id == playlist.playlistId) {
-                    document.getElementById(usersPlaylists[i].name).innerHTML = "Remove";
-                    document.getElementById(usersPlaylists[i].name).className = "btn btn-sm btn-danger";
-                    break;
+        if (isPlaylistAlreadySelected(playlist.userId, playlist.playlistId)) {
+            for (i = 0; i < selectedPlaylists.length; i++) {
+                if (selectedPlaylists[i].playlistId == playlist.playlistId) {
+                    selectedPlaylists.splice(i, 1);
+                    document.getElementById("divForSinglePlaylist").style.display = "none";
+                    $("#divForSinglePlaylistFromUrl").remove();
+                    if (usersPlaylists != null) {
+                        for (i = 0; i < usersPlaylists.length; i++) {
+                            if (usersPlaylists[i].id == playlist.playlistId) {
+                                document.getElementById(usersPlaylists[i].name).innerHTML = "Add";
+                                document.getElementById(usersPlaylists[i].name).className = "btn btn-sm btn-primary";
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            selectedPlaylists.push(playlist);
+            document.getElementById("divForSinglePlaylist").style.display = "none";
+            $("#divForSinglePlaylistFromUrl").remove();
+            if (usersPlaylists != null) {
+                for (i = 0; i < usersPlaylists.length; i++) {
+                    if (usersPlaylists[i].id == playlist.playlistId) {
+                        document.getElementById(usersPlaylists[i].name).innerHTML = "Remove";
+                        document.getElementById(usersPlaylists[i].name).className = "btn btn-sm btn-danger";
+                        break;
+                    }
                 }
             }
         }
         displayPlaylists();
     }
     function finishAdding() {
+        $('#spotifyUserInput').val('');
         $('#divForPlaylists').remove();
+        usersPlaylists = new Array();
 
     }
 
@@ -269,7 +313,11 @@
         var userCountInURL = (URL.match(/\/user\//g) || []).length;
         var playlistCountInURL = (URL.match(/\/playlist\//g) || []).length;
 
-        if (!(URL.startsWith("https://open.spotify.com/user/") || URL.startsWith("https://play.spotify.com/user/")) || playlistId.length != 22 || userCountInURL != 1 || playlistCountInURL != 1 || userId.length <= 0) {
+        if(URL.startsWith("open.spotify.com/user/") || URL.startsWith("play.spotify.com/user/")) {
+            URL = "http://" + URL; 
+        }
+
+        if (!(URL.startsWith("https://open.spotify.com/user/") || URL.startsWith("https://play.spotify.com/user/") || URL.startsWith("http://open.spotify.com/user/") || URL.startsWith("http://play.spotify.com/user/")) || playlistId.length != 22 || userCountInURL != 1 || playlistCountInURL != 1 || userId.length <= 0) {
             alert('This is not a Spotify playlist URL!');
         }
         else {
@@ -285,17 +333,16 @@
                         return;
                     }
 
-                    if (isPlaylistAlreadySelected(userId, playlistId)) {
-                        alert('This playlist is already selected! Please select a different playlist or remove the playlist from your selected playlists!');
-                        return;
-                    }
-
                     document.getElementById("divForSinglePlaylist").style.display = "inline-block";
                     var src = "https://embed.spotify.com/?uri=" + queriedPlaylistFromUrl.uri;
-                    var playlistElement = '<div ' + 'id=' + "\"" + "divForSinglePlaylistFromUrl" + "\"" + "style=" + "\"" + "display:inline-block; width: auto; height: auto;" + "\"" + ">" + "<p>" + '<button type=' + "\"" + "button" + "\"" + 'id=' + "\"" + "addPlaylistFromUrlButton" + "\"" + "class=" + "\"" + "btn btn-sm btn-primary" + "\"" + " onclick=" + "\"" + "selectPlaylistFromUrl()" + "\"" + '>Add</button>' + "<b>" + "  " + queriedPlaylistFromUrl.name + "</b>" + "</p>"
+                    var playlistElement = '<div ' + 'id=' + "\"" + "divForSinglePlaylistFromUrl" + "\"" + "style=" + "\"" + "display:inline-block; width: auto; height: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" + "\"" + ">" + "<p>" + '<button type=' + "\"" + "button" + "\"" + 'id=' + "\"" + "addPlaylistFromUrlButton" + "\"" + "class=" + "\"" + "btn btn-sm btn-primary" + "\"" + " onclick=" + "\"" + "selectPlaylistFromUrl()" + "\"" + '>Add</button>' + "<b>" + "  " + queriedPlaylistFromUrl.name + "</b>" + "</p>"
                                             + '<iframe src=' + "\"" + src + "\"" + 'width="300" height="380" frameborder="0" allowtransparency="true" ></iframe>' +
                                             "</div>";
                     $("#divForSinglePlaylist").append(playlistElement);
+                    if (isPlaylistAlreadySelected(userId, playlistId)) {
+                        document.getElementById('addPlaylistFromUrlButton').innerHTML = "Remove";
+                        document.getElementById('addPlaylistFromUrlButton').className = "btn btn-sm btn-danger";
+                    }
 
                 }
             });
@@ -305,7 +352,6 @@
 
     function getPlaylists() {
         var spotifyUserName = $('#spotifyUserInput').val();
-        $('#spotifyUserInput').val('');
         $('#divForPlaylists').remove();
         if (spotifyUserName.length <= 0) {
             alert('Please add a Spotify username!')
@@ -327,7 +373,7 @@
                     $("#spotifyUserForm").append(divForPlaylists);
                     for (i = 0; i < usersPlaylists.length; i++) {
                         var src = "https://embed.spotify.com/?uri=" + usersPlaylists[i].uri;
-                        var playlistElement = '<div ' + 'id=' + "\"" + "divForSinglePlaylists" + "\"" + "style=" + "\"" + "display:inline-block; width: 350px; height: 500px;" + "\"" + ">" + "<p>" + '<button type=' + "\"" + "button" + "\"" + 'id=' + "\"" + usersPlaylists[i].name + "\"" + "class=" + "\"" + "btn btn-sm btn-primary" + "\"" + " onclick=" + "\"" + "selectUserPlaylist(" + '\'' + usersPlaylists[i].id + '\'' + ")" + "\"" + '>Add</button>' + "<b>" + "  " + usersPlaylists[i].name + "</b>" + "</p>"
+                        var playlistElement = '<div ' + 'id=' + "\"" + "divForSinglePlaylists" + "\"" + "style=" + "\"" + "display:inline-block; width: 350px; height: 500px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" + "\"" + ">" + "<p>" + '<button type=' + "\"" + "button" + "\"" + 'id=' + "\"" + usersPlaylists[i].name + "\"" + "class=" + "\"" + "btn btn-sm btn-primary" + "\"" + " onclick=" + "\"" + "selectUserPlaylist(" + '\'' + usersPlaylists[i].id + '\'' + ")" + "\"" + '>Add</button>' + "<b>" + "  " + usersPlaylists[i].name + "</b>" + "</p>"
                                                 + '<iframe src=' + "\"" + src + "\"" + 'width="300" height="380" frameborder="0" allowtransparency="true" id=' + "\"" + i + "\"" + ' onclick=' + "\"" + "selectUserPlaylist(id)" + "\"" + ' ></iframe>' +
                                                 "</div>";
                         $("#divForPlaylists").append(playlistElement);
