@@ -18,6 +18,8 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         private const string tokenEndpoint = "https://accounts.spotify.com/api/token";
         public static string AccessToken { get; set; }
         public static string RefreshToken { get; set; }
+        public static int TokenExpirationTimeInSeconds { get; set; }
+        public static DateTime TokenObtained { get; set; }
 
 
         public SpotifyAuthorization (IOptions<SpotifyWebAPIWrapper.SpotifyCredentialsSettings> spotifyCredentialsSettings)
@@ -84,6 +86,8 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 
             AccessToken = spotifyToken.AccessToken;
             RefreshToken = spotifyToken.RefreshToken;
+            TokenExpirationTimeInSeconds = spotifyToken.ExpiresIn;
+            TokenObtained = DateTime.Now;
 
             return true;
         }
@@ -102,7 +106,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         }
 
 
-        private class SpotifyToken
+        public class SpotifyToken
         {
             [JsonProperty(PropertyName = "access_token")]
             public string AccessToken { get; set; }

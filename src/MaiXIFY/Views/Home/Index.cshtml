@@ -77,12 +77,12 @@
             return;
         }
         else {
-            var SelectedPlaylistElem = new Array();
+            var selectedPlaylistElem = new Array();
             for (i = 0; i < selectedPlaylists.length; i++) {
-                var playlistToUploadItem = { userId: "", playlistId: "" };
+                var playlistToUploadItem = { "userId": "", "playlistId": "" };
                 playlistToUploadItem.userId = selectedPlaylists[i].userId;
                 playlistToUploadItem.playlistId = selectedPlaylists[i].playlistId;
-                SelectedPlaylistElem.push(playlistToUploadItem);
+                selectedPlaylistElem.push(playlistToUploadItem);
             }
             var playlistName = $('#mixedPlaylistName').val();
             var isPublic = document.getElementById('isPublic').checked;
@@ -103,24 +103,10 @@
             document.cookie = "recommendedMusicSetting" + "=" + recommendedMusic;
             document.cookie = "sortOptionSetting" + "=" + sortOption;
 
-            // Ezekkel is próbálkoztam...
+            var postData = { selectedPlaylists: selectedPlaylistElem, playlistName: playlistName, isPublic: isPublic, isCollaborative: isCollaborative };
 
-            //SelectedPlaylistElem = JSON.stringify({ 'SelectedPlaylistElem': SelectedPlaylistElem });
-
-            //var url = "/Home/GeneratePlaylist?selectedPlaylists=" + JSON.stringify(SelectedPlaylistElem) + "&" + "playlistName=" + playlistName + "&" + "isPublic=" + isPublic + "&" + "isCollaborative=" + isCollaborative;
-            //window.location.href = url;
-
-            // Utoljára ezt próbálgattam:   
-
-            var postData = { values: SelectedPlaylistElem };
-
-            $.post('@Url.Action("GeneratePlaylist")', { selectedPlaylists: postData, playlistName: playlistName, isPublic: isPublic, isCollaborative: isCollaborative },
-                function () {
-                    $('#result').html('"PassThings()" successfully called.');
-                });
-
+            $.post('@Url.Action("GeneratePlaylist")', postData);
         }
-
     }
 
 
@@ -229,6 +215,7 @@
         return contains;
     }
 
+
     function selectPlaylistFromUrl() {
         var playlist = { userId: "", playlistId: "", uri: "", name: "" };
         playlist.userId = queriedPlaylistFromUrl.owner.id;
@@ -265,6 +252,7 @@
         }
         return contains;
     }
+
 
     function getPlaylistByURL() {
         var URL = $('#playlistIdInput').val();

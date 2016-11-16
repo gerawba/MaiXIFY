@@ -19,7 +19,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         {
             get 
             {
-                if (SpotifyWebAPIWrapper.SpotifyAuthorization.AccessToken == null)
+                if (SpotifyWebAPIWrapper.SpotifyAuthorization.AccessToken == null || SpotifyWebAPIWrapper.SpotifyAuthorization.TokenObtained.AddSeconds (SpotifyWebAPIWrapper.SpotifyAuthorization.TokenExpirationTimeInSeconds) < DateTime.Now)
                     return "Bearer ";
                 else
                     return "Bearer " + SpotifyWebAPIWrapper.SpotifyAuthorization.AccessToken;
