@@ -85,8 +85,8 @@
 
         if (document.cookie.indexOf('thresholdSetting') > -1) {
             var thresholdSettingCookieValue = getCookie('thresholdSetting');
-            document.getElementById("thresholdRange").value = thresholdSettingCookieValue * 100;
-            document.getElementById("thersholdLabel").value = thresholdSettingCookieValue * 100 + "%";
+            document.getElementById("thresholdRange").value = parseInt(thresholdSettingCookieValue * 100);
+            document.getElementById("thersholdLabel").value = parseInt(thresholdSettingCookieValue * 100) + "%";
         }
         else {
             document.getElementById("thresholdRange").value = "50";
