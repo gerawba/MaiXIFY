@@ -13,7 +13,7 @@
         <input type="hidden" name="playlistName" id="MaiXIFYplaylistName" />
         <input type="hidden" name="isPublic" id="MaiXIFYisPublic" />
         <input type="hidden" name="isCollaborative" id="MaiXIFYisCollaborative" />
-        <button class="btn btn-lg btn-default" type="submit">MaiXIFY it!</button>
+        <div style="text-align: center"><button class="btn btn-lg btn-default" type="submit">MaiXIFY it!</button></div>
     }
 
     <br>
@@ -22,7 +22,7 @@
             <th style="padding:0 15px 0 15px;white-space: nowrap;"><b>MaiXIFY SETTINGS:</b></th>
             <th style="padding:0 15px 0 15px;white-space: nowrap;">Threshold:</th>
             <th style="padding:0 15px 0 15px;white-space: nowrap;"><input id="thresholdRange" name="thresholdRange" type="range" min="0" max="100" step="1" onchange="updateRangeValueInput(this.value);"></th>
-            <th style="padding:0 15px 0 15px;white-space: nowrap;"><output id="thersholdLabel" name="thersholdLabel" value="50" text="50">50%</output></th>
+            <th style="padding:0 15px 0 15px;white-space: nowrap;"><output id="thersholdLabel" name="thersholdLabel">50%</output></th>
             <th style="padding:0 15px 0 15px;white-space: nowrap;"><input id="isRecommendedMusicSet" type="checkbox" name="isRecommendedMusicSet" value="RecommendedMusic">Add some plus recommended track</th>
             <th style="padding:0 15px 0 15px;white-space: nowrap;">Sort options:</th>
             <th style="padding:0 15px 0 15px;white-space: nowrap;">
@@ -82,11 +82,55 @@
                 $("#getUserPlaylistsButton").click();
             }
         });
+
+        if (document.cookie.indexOf('thresholdSetting') > -1) {
+            var thresholdSettingCookieValue = getCookie('thresholdSetting');
+            document.getElementById("thresholdRange").value = thresholdSettingCookieValue * 100;
+            document.getElementById("thersholdLabel").value = thresholdSettingCookieValue * 100 + "%";
+        }
+        else {
+            document.getElementById("thresholdRange").value = "50";
+            document.getElementById("thersholdLabel").value = "50%"
+
+        }
+
+        if (document.cookie.indexOf('recommendedMusicSetting') > -1) {
+            var recommendedMusicSettingCookieValue = getCookie('recommendedMusicSetting');
+            document.getElementById("isRecommendedMusicSet").checked = recommendedMusicSettingCookieValue;
+        }
+        else {
+            document.getElementById("isRecommendedMusicSet").checked = false;
+        }
+
+        if (document.cookie.indexOf('sortOptionSetting') > -1) {
+            var sortOprionSettingCookieValue = getCookie('sortOptionSetting');
+            var element = document.getElementById('sortOptionDropdownList');
+            element.value = sortOprionSettingCookieValue;
+        }
+        else {
+            var element = document.getElementById('sortOptionDropdownList');
+            element.value = mostHit;
+        }
     });    
 
     var selectedPlaylists = new Array();
     var usersPlaylists = new Array();
     var queriedPlaylistFromUrl;
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
 
     function modifiePlaylistNameFields() {
         if (document.getElementById('displayPlaylistNameField').checked) {
