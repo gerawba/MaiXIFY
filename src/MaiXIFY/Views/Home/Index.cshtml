@@ -14,15 +14,15 @@
         <tr>
             <th style="padding:0 15px 0 15px;"><b>MaiXIFY ALGORITHM SETTINGS: </b></th>
             <th style="padding:0 15px 0 15px;">Threshold:</th>
-            <th style="padding:0 15px 0 15px;"><input id="thresholdRange" name="thresholdRange" type="range" min="0" max="100" onchange="updateRangeValueInput(this.value);"></th>
-            <th style="padding:0 15px 0 15px;"><output id="thersholdLabel" name="thersholdLabel" value="50" text="50">50</output></th>
+            <th style="padding:0 15px 0 15px;"><input id="thresholdRange" name="thresholdRange" type="range" min="0" max="1" step="0.01" onchange="updateRangeValueInput(this.value);"></th>
+            <th style="padding:0 15px 0 15px;"><output id="thersholdLabel" name="thersholdLabel" value="0.5" text="0.5">0.5</output></th>
             <th style="padding:0 15px 0 15px;"><input id="isRecommendedMusicSet" type="checkbox" name="isRecommendedMusicSet" value="RecommendedMusic">Recommended Music</th>
             <th style="padding:0 15px 0 15px;">Sort options:</th>
             <th style="padding:0 15px 0 15px;">
                 <select id="sortOptionDropdownList" name="sortOptionDropdownList">
-                    <option value="MostHit">Most Hit</option>
-                    <option value="Popularity">Popularity</option>
-                    <option value="Random">Random</option>
+                    <option value="mostHit">Most Hit</option>
+                    <option value="popularity">Popularity</option>
+                    <option value="random">Random</option>
                 </select>
             </th>
         </tr>
