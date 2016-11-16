@@ -10,19 +10,30 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 {
     public class SpotifyEndpointAccessor : ISpotifyEndpointAccessor
     {
+        private static SpotifyWebAPIWrapper.ISpotifyAuthorization _spotifyAuthorization;
         private static string baseUrl = "https://api.spotify.com";
         private static string usersUrl = "/v1/users/";
         private static string artistsUrl = "/v1/artists/";
         private static string tracksUrl = "/v1/tracks/";
 
+
+        public SpotifyEndpointAccessor (SpotifyWebAPIWrapper.ISpotifyAuthorization spotifyAuthorization)
+        {
+            _spotifyAuthorization = spotifyAuthorization;
+        }
+
+
         public static string AuthorizationHeader
         {
             get 
             {
-                if (SpotifyWebAPIWrapper.SpotifyAuthorization.AccessToken == null || SpotifyWebAPIWrapper.SpotifyAuthorization.TokenObtained.AddSeconds (SpotifyWebAPIWrapper.SpotifyAuthorization.TokenExpirationTimeInSeconds) < DateTime.Now)
-                    return "Bearer ";
-                else
-                    return "Bearer " + SpotifyWebAPIWrapper.SpotifyAuthorization.AccessToken;
+                if (SpotifyWebAPIWrapper.SpotifyAuthorization.AccessToken == null || SpotifyWebAPIWrapper.SpotifyAuthorization.TokenObtained.AddSeconds (SpotifyWebAPIWrapper.SpotifyAuthorization.TokenExpirationTimeInSeconds) < DateTime.Now) {
+                    bool succes = _spotifyAuthorization.RequestAccesTokenFromRefreshToken ();
+                    if (!succes)
+                        return "Bearer ";
+
+                }
+                return "Bearer " + SpotifyWebAPIWrapper.SpotifyAuthorization.AccessToken;
             }
         }
 

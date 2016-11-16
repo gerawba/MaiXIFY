@@ -93,6 +93,35 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         }
 
 
+        public bool RequestAccesTokenFromRefreshToken ()
+        {
+            var client = new HttpClient ();
+
+            var requestContent = new FormUrlEncodedContent (new[] {
+                new KeyValuePair<string, string> ("grant_type", "refresh_token"),
+                new KeyValuePair<string, string> ("refresh_token", RefreshToken)
+            });
+
+            string clientCredentialsString = _spotifyCredentialsSettings.ClientId + ":" + _spotifyCredentialsSettings.ClientSecret;
+            byte[] clientCredentialsBytes = System.Text.Encoding.UTF8.GetBytes (clientCredentialsString);
+            client.DefaultRequestHeaders.Add ("Authorization", "Basic " + Convert.ToBase64String (clientCredentialsBytes));
+
+            var response = client.PostAsync (tokenEndpoint, requestContent).Result;
+
+            if (!response.IsSuccessStatusCode)
+                return false;
+
+            var responseContent = response.Content.ReadAsStringAsync ().Result;
+            var spotifyToken = JsonConvert.DeserializeObject<SpotifyToken> (responseContent);
+
+            AccessToken = spotifyToken.AccessToken;
+            TokenExpirationTimeInSeconds = spotifyToken.ExpiresIn;
+            TokenObtained = DateTime.Now;
+
+            return true;
+        }
+
+
         private string GenerateRandomString(int length)
         {
             string text = "";

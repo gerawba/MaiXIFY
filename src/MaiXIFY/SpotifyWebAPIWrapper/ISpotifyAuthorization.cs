@@ -11,5 +11,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         string RequestAuthorization (string scope, HttpContext context);
 
         bool RequestAccessAndRefreshTokens (HttpContext context);
+
+        bool RequestAccesTokenFromRefreshToken ();
     }
 }

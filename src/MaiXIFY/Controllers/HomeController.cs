@@ -15,11 +15,13 @@ namespace MaiXIFY.Controllers
         public HomeController (SpotifyWebAPIWrapper.ISpotifyEndpointAccessor spotifyEndpointAccessor)
         {
             _spotifyEndpointAccessor = spotifyEndpointAccessor;
+            userName = _spotifyEndpointAccessor.GetCurrentUserProfile ().Id;
         }
 
 
         public IActionResult Index ()
         {
+            ViewData["userName"] = userName;
             return View ();
         }
 
