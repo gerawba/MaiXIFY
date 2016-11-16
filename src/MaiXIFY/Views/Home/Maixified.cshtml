@@ -9,17 +9,19 @@
 </h2>
 <br />
 <div id="divForPlaylist">
-    <b>@Model.Name</b><br/>
-    <iframe src="@Model.Uri" width="300" height="380" frameborder="0" allowtransparency="true" ></iframe>
-    <button type="button" class="btn btn-sm btn-primary" onclick="redirectToSpotify()">OPEN THIS PLAYLIST AT SPOTIFY</button>
-    <button type="button" class="btn btn-lg btn-default" onclick="redirectToiNDEX()">BACK TO CREATE NEW MIXED PLAYLIST</button>
+    <div style="text-align: center">
+        <b>@Model.Name</b><br />
+        <iframe src="https://embed.spotify.com/?uri=@Model.Uri" width="300" height="380" frameborder="0" allowtransparency="true"></iframe><br>
+        <button type="button" class="btn btn-sm btn-default" onclick="redirectToIndex()">Back to create another playlist</button>
+        <button type="button" class="btn btn-sm btn-primary" onclick="redirectToSpotify()">Open this playlist at Spotify</button>
+    </div>
 </div>
-<script>
+<script type="text/javascript">
     function redirectToSpotify() {
-        document.location.href = "https://open.spotify.com/user/" + @Model.OwnerUser + "/playlist/" + @Model.Id";
+        document.location.href = "https://open.spotify.com/user/" + '@Model.OwnerUser.Id' + "/playlist/" + '@Model.Id'
     }
 
-    function redirectToiNDEX() {
+    function redirectToIndex() {
         document.location.href = "@Url.Action("Index", "Home")";
     }
 </script>
