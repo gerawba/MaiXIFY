@@ -73,11 +73,12 @@ namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
                 }
             }
 
-            if (recommendedTrackUriList.Count < 1) {
+            if (recommendedTrackUriList.Count < 1 || (recommendedTrackUriList.Count < 10 && Settings.RecommendedMusic)) {
                 if (Settings.RecommendedMusic == false)
                     return null;
                 else {
-                    recommendedTrackUriList = GenerateRecommendedPlaylist (sortedTracks, artistsFrequency);
+                    recommendedTrackUriList.AddRange (GenerateRecommendedPlaylist (sortedTracks, artistsFrequency));
+                    recommendedTrackUriList = recommendedTrackUriList.Distinct ().ToList ();
                 }
             }
 
