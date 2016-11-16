@@ -68,9 +68,9 @@ namespace MaiXIFY.Controllers
 
         public IActionResult GeneratePlaylist (List<SpotifyWebAPIWrapper.SpotifyHelpers.SelectedPlaylistElem> selectedPlaylists, string playlistName, bool isPublic, bool isCollaborative)
         {
-            if (selectedPlaylists.Count < 2) {
-                return Json(new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError(400, "Bad request (minimum selected playlist number: 2)"));
-            }
+            //if (selectedPlaylists.Count < 2) {
+            //    return Json(new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError(400, "Bad request (minimum selected playlist number: 2)"));
+            //}
 
             List<SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist> selectedPlaylistsObject = _spotifyEndpointAccessor.GetPlaylists (selectedPlaylists);
 
@@ -88,10 +88,10 @@ namespace MaiXIFY.Controllers
                 playlistName = SpotifyWebAPIWrapper.SpotifyHelpers.MakeDefaultPlaylistName ();
 
             SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist generatedPlaylist = mixer.GenerateMaixifyPlaylist (selectedPlaylistsObject, playlistName, isPublic, isCollaborative);
-            if (generatedPlaylist == null)
-                return Json (new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError (400, "Bad request (cannot make playlist with the given settings)"));
+            //if (generatedPlaylist == null)
+            //    return Json (new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError (400, "Bad request (cannot make playlist with the given settings)"));
 
-            return Json (generatedPlaylist);
+            return View("Maixified", generatedPlaylist);
         }
 
 
