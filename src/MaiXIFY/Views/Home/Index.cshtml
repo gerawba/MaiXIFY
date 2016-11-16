@@ -14,8 +14,8 @@
         <tr>
             <th style="padding:0 15px 0 15px;"><b>MaiXIFY ALGORITHM SETTINGS: </b></th>
             <th style="padding:0 15px 0 15px;">Threshold:</th>
-            <th style="padding:0 15px 0 15px;"><input id="thresholdRange" name="thresholdRange" type="range" min="0" max="1" step="0.01" onchange="updateRangeValueInput(this.value);"></th>
-            <th style="padding:0 15px 0 15px;"><output id="thersholdLabel" name="thersholdLabel" value="0.5" text="0.5">0.5</output></th>
+            <th style="padding:0 15px 0 15px;"><input id="thresholdRange" name="thresholdRange" type="range" min="0" max="100" step="1" onchange="updateRangeValueInput(this.value);"></th>
+            <th style="padding:0 15px 0 15px;"><output id="thersholdLabel" name="thersholdLabel" value="50" text="50">50</output> % </th>
             <th style="padding:0 15px 0 15px;"><input id="isRecommendedMusicSet" type="checkbox" name="isRecommendedMusicSet" value="RecommendedMusic">Recommended Music</th>
             <th style="padding:0 15px 0 15px;">Sort options:</th>
             <th style="padding:0 15px 0 15px;">
@@ -93,7 +93,7 @@
                 return;
             }
 
-            var thresholdValue = document.getElementById('thresholdRange').value;
+            var thresholdValue = (document.getElementById('thresholdRange').value / 100).toString().replace(".", ",");
             var recommendedMusic = document.getElementById('isRecommendedMusicSet').checked;
 
             var e = document.getElementById("sortOptionDropdownList");
