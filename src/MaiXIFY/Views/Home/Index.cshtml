@@ -85,8 +85,8 @@
                 SelectedPlaylistElem.push(playlistToUploadItem);
             }
             var playlistName = $('#mixedPlaylistName').val();
-            var isPublic = $('#isPublic').val();
-            var isCollaborative = $('#isCollaborative').val();
+            var isPublic = document.getElementById('isPublic').checked;
+            var isCollaborative = document.getElementById('isCollaborative').checked;
 
             if (playlistName.length <= 0) {
                 alert('Please define a name for your playlist!');
@@ -94,20 +94,29 @@
             }
 
             var thresholdValue = document.getElementById('thresholdRange').value;
-            var recommendedMusic = $('#isRecommendedMusicSet').val();
+            var recommendedMusic = document.getElementById('isRecommendedMusicSet').checked;
 
             var e = document.getElementById("sortOptionDropdownList");
             var sortOption = e.options[e.selectedIndex].value;
 
-            var d = new Date();
-            d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000));
-            var expires = "expires=" + d.toUTCString();
-            document.cookie = "thresholdSetting" + "=" + thresholdValue + ";" + "recommendedMusicSetting" + "=" + recommendedMusic + ";" + "sortOptionSetting" + "=" + sortOption + ";" + expires + ";path=/";
+            document.cookie = "thresholdSetting" + "=" + thresholdValue;
+            document.cookie = "recommendedMusicSetting" + "=" + recommendedMusic;
+            document.cookie = "sortOptionSetting" + "=" + sortOption;
 
-            SelectedPlaylistElem = JSON.stringify({ 'SelectedPlaylistElem': SelectedPlaylistElem });
+            // Ezekkel is próbálkoztam...
 
-            var url = "/Home/GeneratePlaylist?selectedPlaylists=" + SelectedPlaylistElem + "&" + "playlistName=" + playlistName + "&" + "isPublic=" + isPublic + "&" + "isCollaborative=" + isCollaborative;
-            window.location.href = url;
+            //SelectedPlaylistElem = JSON.stringify({ 'SelectedPlaylistElem': SelectedPlaylistElem });
+
+            //var url = "/Home/GeneratePlaylist?selectedPlaylists=" + JSON.stringify(SelectedPlaylistElem) + "&" + "playlistName=" + playlistName + "&" + "isPublic=" + isPublic + "&" + "isCollaborative=" + isCollaborative;
+            //window.location.href = url;
+
+
+            var postData = { values: SelectedPlaylistElem };
+
+            $.post('@Url.Action("GeneratePlaylist")', { selectedPlaylists: postData, playlistName: playlistName, isPublic: isPublic, isCollaborative: isCollaborative },
+                function () {
+                    $('#result').html('"PassThings()" successfully called.');
+                });
 
         }
 
