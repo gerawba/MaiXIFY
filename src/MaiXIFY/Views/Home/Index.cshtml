@@ -8,7 +8,14 @@
 </h2>
 <br />
 <div id="divForMaiXIFYButtonAndSettings" style="display:none">
-    <button type="button" class="btn btn-lg btn-default" onclick="MaiXIFY()">MaiXIFY it!</button>
+    @using (Html.BeginForm("GeneratePlaylist", "Home", FormMethod.Post, new { onsubmit = "SetMaiXIFYInputs ()" }))
+    {
+        <input type="hidden" name="playlistName" id="MaiXIFYplaylistName" />
+        <input type="hidden" name="isPublic" id="MaiXIFYisPublic" />
+        <input type="hidden" name="isCollaborative" id="MaiXIFYisCollaborative" />
+        <button class="btn btn-lg btn-default" type="submit">MaiXIFY it!</button>
+    }
+
     <br>
     <table>
         <tr>
@@ -60,7 +67,6 @@
         <br />
     </div>
 </div>
-<script src="/js/handlebars-v4.0.5.js"></script>
 <script>
 
     var selectedPlaylists = new Array();
@@ -70,6 +76,19 @@
     function updateRangeValueInput(thresholdValue) {
         document.getElementById('thersholdLabel').value = thresholdValue;
     }
+
+    function SetMaiXIFYInputs() {
+        var postData = MaiXIFY();
+
+        postData.selectedPlaylists.forEach(function (playlist, i) {
+            $("form").append("<input type='hidden' name='selectedPlaylists[" + i + "].userId' value='" + playlist.userId + "' />" +
+                             "<input type='hidden' name='selectedPlaylists[" + i + "].playlistId' value='" + playlist.playlistId + "' />");
+        });
+
+        $('#MaiXIFYplaylistName').val(postData.playlistName);
+        $('#MaiXIFYisPublic').val(postData.isPublic);
+        $('#MaiXIFYisCollaborative').val(postData.isCollaborative);
+    };
 
     function MaiXIFY() {
         if (selectedPlaylists.length <= 1) {
@@ -104,8 +123,7 @@
             document.cookie = "sortOptionSetting" + "=" + sortOption;
 
             var postData = { selectedPlaylists: selectedPlaylistElem, playlistName: playlistName, isPublic: isPublic, isCollaborative: isCollaborative };
-
-            $.post('@Url.Action("GeneratePlaylist")', postData);
+            return postData;
         }
     }
 
@@ -236,6 +254,7 @@
         }
         displayPlaylists();
     }
+
     function finishAdding() {
         $('#divForPlaylists').remove();
 
