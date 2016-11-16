@@ -1,0 +1,26 @@
+﻿@model MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist
+
+@{
+    ViewData["Title"] = "MaiXIFY";
+}
+
+<h2>
+    Here is your mixed playlist!<br /><br />
+</h2>
+<br />
+<div id="divForPlaylist">
+    <b>@Model.Name</b><br/>
+    <iframe src="@Model.Uri" width="300" height="380" frameborder="0" allowtransparency="true" ></iframe>
+    <button type="button" class="btn btn-sm btn-primary" onclick="redirectToSpotify()">OPEN THIS PLAYLIST AT SPOTIFY</button>
+    <button type="button" class="btn btn-lg btn-default" onclick="redirectToiNDEX()">BACK TO CREATE NEW MIXED PLAYLIST</button>
+</div>
+<script>
+    function redirectToSpotify() {
+        document.location.href = "https://open.spotify.com/user/" + @Model.OwnerUser + "/playlist/" + @Model.Id";
+    }
+
+    function redirectToiNDEX() {
+        document.location.href = "@Url.Action("Index", "Home")";
+    }
+</script>
+
