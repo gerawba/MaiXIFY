@@ -74,7 +74,7 @@ namespace MaiXIFY.Controllers
 
             List<SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist> selectedPlaylistsObject = _spotifyEndpointAccessor.GetPlaylists (selectedPlaylists);
 
-            SpotifyWebAPIWrapper.SpotifyObjectModel.PlaylistMixerCoreLogic mixer = new SpotifyWebAPIWrapper.SpotifyObjectModel.PlaylistMixerCoreLogic(_spotifyEndpointAccessor);
+            SpotifyWebAPIWrapper.SpotifyObjectModel.PlaylistMixerCoreLogic mixer = new SpotifyWebAPIWrapper.SpotifyObjectModel.PlaylistMixerCoreLogic (_spotifyEndpointAccessor);
             if (HttpContext.Request.Cookies.ContainsKey (SpotifyWebAPIWrapper.SpotifyHelpers.thresholdSettingCookieKey) &&
                 HttpContext.Request.Cookies.ContainsKey (SpotifyWebAPIWrapper.SpotifyHelpers.recommendedMusicSettingCookieKey) &&
                 HttpContext.Request.Cookies.ContainsKey (SpotifyWebAPIWrapper.SpotifyHelpers.sortOptionSettingCookieKey))
@@ -91,12 +91,14 @@ namespace MaiXIFY.Controllers
             if (generatedPlaylist == null)
                 return RedirectToAction ("Error", new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError (400, "Cannot make playlist with the given settings!"));
 
-            return RedirectToAction ("Maixified", generatedPlaylist);
+            return RedirectToAction ("Maixified", new { userId = generatedPlaylist.OwnerUser.Id, playlistId = generatedPlaylist.Id });
         }
 
 
-        public IActionResult Maixified (SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist generatedPlaylist)
+        public IActionResult Maixified (string userId, string playlistId)
         {
+            SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist generatedPlaylist = _spotifyEndpointAccessor.GetPlaylist (userId, playlistId);
+
             return View (generatedPlaylist);
         }
 
