@@ -96,7 +96,12 @@
 
         if (document.cookie.indexOf('recommendedMusicSetting') > -1) {
             var recommendedMusicSettingCookieValue = getCookie('recommendedMusicSetting');
-            document.getElementById("isRecommendedMusicSet").checked = recommendedMusicSettingCookieValue;
+            if (recommendedMusicSettingCookieValue == "true") {
+                $("#isRecommendedMusicSet").prop("checked", true);
+            }
+            else {
+                $("#isRecommendedMusicSet").prop("checked", false);
+            }
         }
         else {
             document.getElementById("isRecommendedMusicSet").checked = false;
