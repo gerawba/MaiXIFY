@@ -1,3 +1,11 @@
 ﻿<h2>@ViewData["Message"]</h2>
 
 <h3>@ViewData["ErrorMessage"]</h3>
+
+<button type="button" class="btn btn-sm btn-default" onclick="redirectToIndex()">Back to create playlist</button>
+
+<script>
+    function redirectToIndex() {
+        document.location.href = "@Url.Action("Index", "Home")";
+    }
+</script>
