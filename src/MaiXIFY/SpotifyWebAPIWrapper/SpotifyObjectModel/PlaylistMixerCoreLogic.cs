@@ -110,10 +110,24 @@ namespace MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel
                     recommendedTrackUriList.Add (SpotifyHelpers.trackUri + track.Key);
             }
 
-            // add the top 3 tracks from user's playlists most frequent artists
-            int topArtistsFrequencyLimit = (from artist in artistsFrequency
+            HashSet<int> frequencies = new HashSet<int>();
+            foreach (var elem in artistsFrequency)
+                frequencies.Add (elem.Value);
+
+            int topArtistsFrequencyLimit = 0;
+            if (frequencies.Count > 2) {
+                // add the top 3 tracks from user's playlists most frequent artists
+                topArtistsFrequencyLimit = (from artist in artistsFrequency
                                             orderby artist.Value descending
                                             select artist.Value).Distinct ().Skip (2).First ();
+            } else if (frequencies.Count == 2) {
+                topArtistsFrequencyLimit = (from artist in artistsFrequency
+                                            orderby artist.Value descending
+                                            select artist.Value).Distinct ().Skip (1).First (); ;
+            }
+            else if (frequencies.Count == 1) {
+                topArtistsFrequencyLimit = 1;
+            }
 
             if (topArtistsFrequencyLimit < 2)
                 return recommendedTrackUriList;
