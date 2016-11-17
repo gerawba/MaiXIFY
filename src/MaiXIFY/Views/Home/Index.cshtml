@@ -21,7 +21,7 @@
         <tr>
             <th style="padding:0 15px 0 15px;white-space: nowrap;"><b>MaiXIFY SETTINGS:</b></th>
             <th style="padding:0 15px 0 15px;white-space: nowrap;">Threshold:</th>
-            <th style="padding:0 15px 0 15px;white-space: nowrap;"><input id="thresholdRange" name="thresholdRange" type="range" min="0" max="100" step="1" onchange="updateRangeValueInput(this.value);"></th>
+            <th style="padding:0 15px 0 15px;white-space: nowrap;"><input id="thresholdRange" name="thresholdRange" type="range" min="0" max="1" step="0.01" value="0.5" onchange="updateRangeValueInput(this.value)"></th>
             <th style="padding:0 15px 0 15px;white-space: nowrap;"><output id="thersholdLabel" name="thersholdLabel">50%</output></th>
             <th style="padding:0 15px 0 15px;white-space: nowrap;"><input id="isRecommendedMusicSet" type="checkbox" name="isRecommendedMusicSet" value="RecommendedMusic">Add some plus recommended track</th>
             <th style="padding:0 15px 0 15px;white-space: nowrap;">Sort options:</th>
@@ -85,11 +85,11 @@
 
         if (document.cookie.indexOf('thresholdSetting') > -1) {
             var thresholdSettingCookieValue = getCookie('thresholdSetting');
-            document.getElementById("thresholdRange").value = parseInt(thresholdSettingCookieValue * 100);
+            document.getElementById("thresholdRange").value = thresholdSettingCookieValue;
             document.getElementById("thersholdLabel").value = parseInt(thresholdSettingCookieValue * 100) + "%";
         }
         else {
-            document.getElementById("thresholdRange").value = "50";
+            document.getElementById("thresholdRange").value = "0.5";
             document.getElementById("thersholdLabel").value = "50%"
 
         }
@@ -114,7 +114,7 @@
         }
         else {
             var element = document.getElementById('sortOptionDropdownList');
-            element.value = mostHit;
+            element.value = 'mostHit';
         }
     });    
 
@@ -148,7 +148,7 @@
     }
 
     function updateRangeValueInput(thresholdValue) {
-        document.getElementById('thersholdLabel').value = thresholdValue + '%';
+        document.getElementById('thersholdLabel').value = parseInt((thresholdValue * 100)) + '%';
     }
 
     function SetMaiXIFYInputs() {
@@ -181,7 +181,7 @@
             var isPublic = document.getElementById('isPublic').checked;
             var isCollaborative = document.getElementById('isCollaborative').checked;
 
-            var thresholdValue = (document.getElementById('thresholdRange').value / 100).toString();
+            var thresholdValue = (document.getElementById('thresholdRange').value).toString();
             var recommendedMusic = document.getElementById('isRecommendedMusicSet').checked;
 
             var e = document.getElementById("sortOptionDropdownList");
