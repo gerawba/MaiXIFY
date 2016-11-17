@@ -183,7 +183,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
             requestContent.IsPublic = isPublic;
             requestContent.IsCollaborative = isCollaborative;
 
-            var response = client.PostAsync (baseUrl + usersUrl + userId + "/playlists", new StringContent(JsonConvert.SerializeObject(requestContent))).Result;
+            var response = client.PostAsync (baseUrl + usersUrl + userId + "/playlists", new StringContent (JsonConvert.SerializeObject(requestContent))).Result;
 
             if (!response.IsSuccessStatusCode)
                 return null;
