@@ -13,6 +13,7 @@
         <input type="hidden" name="playlistName" id="MaiXIFYplaylistName" />
         <input type="hidden" name="isPublic" id="MaiXIFYisPublic" />
         <input type="hidden" name="isCollaborative" id="MaiXIFYisCollaborative" />
+        <input type="hidden" name="token" id="MaiXIFYtoken" />
         <div style="text-align: center"><button class="btn btn-lg btn-default" type="submit">MaiXIFY it!</button></div>
     }
 
@@ -68,7 +69,14 @@
         <br />
     </div>
 </div>
+
 <script>
+
+    var spotifyToken;
+
+    var selectedPlaylists = new Array();
+    var usersPlaylists = new Array();
+    var queriedPlaylistFromUrl;
 
     window.onload = (function () {
         $("#playlistIdInput").keyup(function (event) {
@@ -83,27 +91,43 @@
             }
         });
 
+
+        if (document.cookie.indexOf('accessToken') > -1 && document.cookie.indexOf('refreshToken') > -1 &&
+            document.cookie.indexOf('expiresIn') > -1 && document.cookie.indexOf('tokenObtained') > -1) {
+            var accessTokenCookieValue = getCookie('accessToken');
+            var refreshTokenCookieValue = getCookie('refreshToken');
+            var expiresInCookieValue = getCookie('expiresIn');
+            var tokenObtainedCookieValue = getCookie('tokenObtained').replace(/%3A/g, ":");
+
+            var token = {
+                'access_token': accessTokenCookieValue,
+                'token_type': null,
+                'scope': null,
+                'expires_in': parseInt(expiresInCookieValue),
+                'refresh_token' : refreshTokenCookieValue,
+                'token_obtained': tokenObtainedCookieValue
+            };
+
+            spotifyToken = JSON.stringify(token);
+        }
+
         if (document.cookie.indexOf('thresholdSetting') > -1) {
             var thresholdSettingCookieValue = getCookie('thresholdSetting');
             document.getElementById("thresholdRange").value = thresholdSettingCookieValue;
             document.getElementById("thersholdLabel").value = parseInt(thresholdSettingCookieValue * 100) + "%";
-        }
-        else {
+        } else {
             document.getElementById("thresholdRange").value = "0.5";
             document.getElementById("thersholdLabel").value = "50%"
-
         }
 
         if (document.cookie.indexOf('recommendedMusicSetting') > -1) {
             var recommendedMusicSettingCookieValue = getCookie('recommendedMusicSetting');
             if (recommendedMusicSettingCookieValue == "true") {
                 $("#isRecommendedMusicSet").prop("checked", true);
-            }
-            else {
+            } else {
                 $("#isRecommendedMusicSet").prop("checked", false);
             }
-        }
-        else {
+        } else {
             document.getElementById("isRecommendedMusicSet").checked = false;
         }
 
@@ -111,31 +135,12 @@
             var sortOprionSettingCookieValue = getCookie('sortOptionSetting');
             var element = document.getElementById('sortOptionDropdownList');
             element.value = sortOprionSettingCookieValue;
-        }
-        else {
+        } else {
             var element = document.getElementById('sortOptionDropdownList');
             element.value = 'mostHit';
         }
-    });    
+    });
 
-    var selectedPlaylists = new Array();
-    var usersPlaylists = new Array();
-    var queriedPlaylistFromUrl;
-
-    function getCookie(cname) {
-        var name = cname + "=";
-        var ca = document.cookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) == ' ') {
-                c = c.substring(1);
-            }
-            if (c.indexOf(name) == 0) {
-                return c.substring(name.length, c.length);
-            }
-        }
-        return "";
-    }
 
     function modifiePlaylistNameFields() {
         if (document.getElementById('displayPlaylistNameField').checked) {
@@ -162,7 +167,9 @@
         $('#MaiXIFYplaylistName').val(postData.playlistName);
         $('#MaiXIFYisPublic').val(postData.isPublic);
         $('#MaiXIFYisCollaborative').val(postData.isCollaborative);
+        $('#MaiXIFYtoken').val(spotifyToken);
     };
+
 
     function MaiXIFY() {
         if (selectedPlaylists.length <= 1) {
@@ -194,6 +201,22 @@
             var postData = { selectedPlaylists: selectedPlaylistElem, playlistName: playlistName, isPublic: isPublic, isCollaborative: isCollaborative };
             return postData;
         }
+    }
+
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
     }
 
 
@@ -391,12 +414,12 @@
         else {
             $.ajax({
                 url: '@Url.Action("GetPlaylist")',
-                data: { 'userId': userId, 'playlistId': playlistId },
+                data: { 'userId': userId, 'playlistId': playlistId, 'token': spotifyToken },
                 type: "post",
                 cache: false,
                 success: function (playlist) {
                     queriedPlaylistFromUrl = playlist;
-                    if (queriedPlaylistFromUrl.hasOwnProperty('errorCode') && queriedPlaylistFromUrl.errorCode == 404) {
+                    if (queriedPlaylistFromUrl.hasOwnProperty('errorCode') && (queriedPlaylistFromUrl.errorCode == 404 || queriedPlaylistFromUrl.errorCode == 400)) {
                         alert('No such Spotify playlist!')
                         return;
                     }
@@ -427,13 +450,14 @@
         else {
             $.ajax({
                 url: '@Url.Action("GetUserPlaylists")',
-                data: { 'userId': spotifyUserName },
+                data: { 'userId': spotifyUserName, 'token': spotifyToken },
                 type: "post",
                 cache: false,
                 success: function (playlists) {
                     usersPlaylists = playlists;
-                    if (usersPlaylists.hasOwnProperty('errorCode') && (usersPlaylists.errorCode == 404 || usersPlaylists.errorCode == 503)) {
-                        alert('No such Spotify user!')
+                    if (usersPlaylists.hasOwnProperty('errorCode') && (usersPlaylists.errorCode == 400 || usersPlaylists.errorCode == 404 || usersPlaylists.errorCode == 503)) {
+                        if (usersPlaylists.errorCode == 404)
+                            alert('No such Spotify user!')
                         return;
                     }
 

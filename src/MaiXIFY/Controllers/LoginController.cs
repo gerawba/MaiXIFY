@@ -24,5 +24,15 @@ namespace MaiXIFY.Controllers
 
             return Redirect (_spotifyAuthorization.RequestAuthorization (scope, HttpContext));
         }
+
+        public IActionResult Callback ()
+        {
+            bool success = _spotifyAuthorization.RequestAccessAndRefreshTokens (HttpContext);
+
+            if (!success)
+                return RedirectToAction ("Error", "Home", new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError (401, "Unauthorized - This page is only available after redirecting from Spotify."));
+
+            return RedirectToAction ("Index", "Home", _spotifyAuthorization.Token);
+        }
     }
 }

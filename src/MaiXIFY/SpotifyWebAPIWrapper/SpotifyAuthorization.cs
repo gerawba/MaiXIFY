@@ -13,13 +13,11 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 {
     public class SpotifyAuthorization : ISpotifyAuthorization
     {
-        private SpotifyWebAPIWrapper.SpotifyCredentialsSettings _spotifyCredentialsSettings { get; set; }
+        private static SpotifyWebAPIWrapper.SpotifyCredentialsSettings _spotifyCredentialsSettings { get; set; }
         private const string authorizeEndpoint = "https://accounts.spotify.com/authorize";
         private const string tokenEndpoint = "https://accounts.spotify.com/api/token";
-        public static string AccessToken { get; set; }
-        public static string RefreshToken { get; set; }
-        public static int TokenExpirationTimeInSeconds { get; set; }
-        public static DateTime TokenObtained { get; set; }
+
+        public SpotifyToken Token { get; set; }
 
 
         public SpotifyAuthorization (IOptions<SpotifyWebAPIWrapper.SpotifyCredentialsSettings> spotifyCredentialsSettings)
@@ -82,12 +80,9 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
                 return false;
 
             var responseContent = response.Content.ReadAsStringAsync().Result;
-            var spotifyToken = JsonConvert.DeserializeObject<SpotifyToken> (responseContent);
+            Token = JsonConvert.DeserializeObject<SpotifyToken> (responseContent);
 
-            AccessToken = spotifyToken.AccessToken;
-            RefreshToken = spotifyToken.RefreshToken;
-            TokenExpirationTimeInSeconds = spotifyToken.ExpiresIn;
-            TokenObtained = DateTime.Now;
+            Token.TokenObtained = DateTime.Now;
 
             return true;
         }
@@ -99,7 +94,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 
             var requestContent = new FormUrlEncodedContent (new[] {
                 new KeyValuePair<string, string> ("grant_type", "refresh_token"),
-                new KeyValuePair<string, string> ("refresh_token", RefreshToken)
+                new KeyValuePair<string, string> ("refresh_token", Token.RefreshToken)
             });
 
             string clientCredentialsString = _spotifyCredentialsSettings.ClientId + ":" + _spotifyCredentialsSettings.ClientSecret;
@@ -114,9 +109,9 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
             var responseContent = response.Content.ReadAsStringAsync ().Result;
             var spotifyToken = JsonConvert.DeserializeObject<SpotifyToken> (responseContent);
 
-            AccessToken = spotifyToken.AccessToken;
-            TokenExpirationTimeInSeconds = spotifyToken.ExpiresIn;
-            TokenObtained = DateTime.Now;
+            Token.AccessToken = spotifyToken.AccessToken;
+            Token.ExpiresIn = spotifyToken.ExpiresIn;
+            Token.TokenObtained = DateTime.Now;
 
             return true;
         }
@@ -139,14 +134,21 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         {
             [JsonProperty(PropertyName = "access_token")]
             public string AccessToken { get; set; }
+
             [JsonProperty(PropertyName = "token_type")]
             public string TokenType { get; set; }
+
             [JsonProperty(PropertyName = "scope")]
             public string Scope { get; set; }
+
             [JsonProperty(PropertyName = "expires_in")]
             public int ExpiresIn { get; set; }
+
             [JsonProperty(PropertyName = "refresh_token")]
             public string RefreshToken { get; set; }
+
+            [JsonProperty(PropertyName = "token_obtained")]
+            public DateTime TokenObtained { get; set; }
         }
     }
 }

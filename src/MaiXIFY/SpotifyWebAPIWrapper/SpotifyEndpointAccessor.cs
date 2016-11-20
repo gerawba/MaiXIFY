@@ -10,11 +10,11 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 {
     public class SpotifyEndpointAccessor : ISpotifyEndpointAccessor
     {
-        private static SpotifyWebAPIWrapper.ISpotifyAuthorization _spotifyAuthorization;
-        private static string baseUrl = "https://api.spotify.com";
-        private static string usersUrl = "/v1/users/";
-        private static string artistsUrl = "/v1/artists/";
-        private static string tracksUrl = "/v1/tracks/";
+        private SpotifyWebAPIWrapper.ISpotifyAuthorization _spotifyAuthorization { get; }
+        private const string baseUrl = "https://api.spotify.com";
+        private const string usersUrl = "/v1/users/";
+        private const string artistsUrl = "/v1/artists/";
+        private const string tracksUrl = "/v1/tracks/";
 
 
         public SpotifyEndpointAccessor (SpotifyWebAPIWrapper.ISpotifyAuthorization spotifyAuthorization)
@@ -23,17 +23,23 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         }
 
 
-        public static string AuthorizationHeader
+        public void SetAuthorizationToken (SpotifyWebAPIWrapper.SpotifyAuthorization.SpotifyToken token)
+        {
+            _spotifyAuthorization.Token = token;
+        }
+
+
+        private string AuthorizationHeader
         {
             get 
             {
-                if (SpotifyWebAPIWrapper.SpotifyAuthorization.AccessToken == null || SpotifyWebAPIWrapper.SpotifyAuthorization.TokenObtained.AddSeconds (SpotifyWebAPIWrapper.SpotifyAuthorization.TokenExpirationTimeInSeconds) < DateTime.Now) {
+                if (_spotifyAuthorization.Token.AccessToken  == null || _spotifyAuthorization.Token.TokenObtained.AddSeconds (_spotifyAuthorization.Token.ExpiresIn) < DateTime.Now) {
                     bool succes = _spotifyAuthorization.RequestAccesTokenFromRefreshToken ();
                     if (!succes)
                         return "Bearer ";
 
                 }
-                return "Bearer " + SpotifyWebAPIWrapper.SpotifyAuthorization.AccessToken;
+                return "Bearer " + _spotifyAuthorization.Token.AccessToken;
             }
         }
 
@@ -212,7 +218,7 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         }
 
 
-        private static HttpClient GetSpotifyHttpClient ()
+        private HttpClient GetSpotifyHttpClient ()
         {
             var client = new HttpClient ();
 

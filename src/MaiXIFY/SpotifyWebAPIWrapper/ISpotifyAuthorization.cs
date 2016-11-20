@@ -8,6 +8,8 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 {
     public interface ISpotifyAuthorization
     {
+        SpotifyAuthorization.SpotifyToken Token { get; set; }
+
         string RequestAuthorization (string scope, HttpContext context);
 
         bool RequestAccessAndRefreshTokens (HttpContext context);

@@ -8,6 +8,8 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
 {
     public interface ISpotifyEndpointAccessor
     {
+        void SetAuthorizationToken (SpotifyWebAPIWrapper.SpotifyAuthorization.SpotifyToken token);
+
         SpotifyUser GetCurrentUserProfile ();
 
         SpotifyUser GetUserProfile (string userId);
