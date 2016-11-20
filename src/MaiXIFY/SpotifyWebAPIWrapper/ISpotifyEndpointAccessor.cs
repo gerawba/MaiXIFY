@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel;
+using Microsoft.AspNetCore.Http;
 
 namespace MaiXIFY.SpotifyWebAPIWrapper
 {
     public interface ISpotifyEndpointAccessor
     {
-        void SetAuthorizationToken (SpotifyWebAPIWrapper.SpotifyAuthorization.SpotifyToken token);
+        void SetAuthorizationToken (SpotifyWebAPIWrapper.SpotifyAuthorization.SpotifyToken token, HttpContext context);
 
         SpotifyUser GetCurrentUserProfile ();
 

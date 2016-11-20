@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using MaiXIFY.SpotifyWebAPIWrapper.SpotifyObjectModel;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
 namespace MaiXIFY.SpotifyWebAPIWrapper
@@ -23,9 +24,20 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         }
 
 
-        public void SetAuthorizationToken (SpotifyWebAPIWrapper.SpotifyAuthorization.SpotifyToken token)
+        public void SetAuthorizationToken (SpotifyWebAPIWrapper.SpotifyAuthorization.SpotifyToken token, HttpContext context)
         {
             _spotifyAuthorization.Token = token;
+
+            if (_spotifyAuthorization.Token.AccessToken == null || _spotifyAuthorization.Token.TokenObtained.AddSeconds (_spotifyAuthorization.Token.ExpiresIn) < DateTime.Now)
+            {
+                bool success = _spotifyAuthorization.RequestAccesTokenFromRefreshToken ();
+                if (success) {
+                    context.Response.Cookies.Append (SpotifyWebAPIWrapper.SpotifyHelpers.accessTokenCookieKey, token.AccessToken);
+                    context.Response.Cookies.Append (SpotifyWebAPIWrapper.SpotifyHelpers.refreshTokenCookieKey, token.RefreshToken);
+                    context.Response.Cookies.Append (SpotifyWebAPIWrapper.SpotifyHelpers.expiresInKey, token.ExpiresIn.ToString ());
+                    context.Response.Cookies.Append (SpotifyWebAPIWrapper.SpotifyHelpers.tokenObtainedKey, token.TokenObtained.ToString ("yyyy-MM-ddTHH:mm:ss.fff"));
+                }
+            }
         }
 
 
@@ -33,12 +45,6 @@ namespace MaiXIFY.SpotifyWebAPIWrapper
         {
             get 
             {
-                if (_spotifyAuthorization.Token.AccessToken  == null || _spotifyAuthorization.Token.TokenObtained.AddSeconds (_spotifyAuthorization.Token.ExpiresIn) < DateTime.Now) {
-                    bool succes = _spotifyAuthorization.RequestAccesTokenFromRefreshToken ();
-                    if (!succes)
-                        return "Bearer ";
-
-                }
                 return "Bearer " + _spotifyAuthorization.Token.AccessToken;
             }
         }

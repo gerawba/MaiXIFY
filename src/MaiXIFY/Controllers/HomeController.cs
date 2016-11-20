@@ -22,7 +22,7 @@ namespace MaiXIFY.Controllers
         public IActionResult Index (SpotifyWebAPIWrapper.SpotifyAuthorization.SpotifyToken token)
         {
             if (token.AccessToken != null) {
-                _spotifyEndpointAccessor.SetAuthorizationToken (token);
+                _spotifyEndpointAccessor.SetAuthorizationToken (token, HttpContext);
 
                 HttpContext.Response.Cookies.Append (SpotifyWebAPIWrapper.SpotifyHelpers.accessTokenCookieKey, token.AccessToken);
                 HttpContext.Response.Cookies.Append (SpotifyWebAPIWrapper.SpotifyHelpers.refreshTokenCookieKey, token.RefreshToken);
@@ -34,7 +34,7 @@ namespace MaiXIFY.Controllers
                 token.ExpiresIn = int.Parse(HttpContext.Request.Cookies[SpotifyWebAPIWrapper.SpotifyHelpers.expiresInKey]);
                 token.TokenObtained = SpotifyWebAPIWrapper.SpotifyHelpers.ParseDateTimeString (HttpContext.Request.Cookies[SpotifyWebAPIWrapper.SpotifyHelpers.tokenObtainedKey]);
 
-                _spotifyEndpointAccessor.SetAuthorizationToken (token);
+                _spotifyEndpointAccessor.SetAuthorizationToken (token, HttpContext);
             }
 
             ViewData["userName"] = _spotifyEndpointAccessor.GetCurrentUserProfile ().Id;
@@ -52,7 +52,7 @@ namespace MaiXIFY.Controllers
                 return Json (new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError (400, "Please add a Spotify username!"));
 
             SpotifyWebAPIWrapper.SpotifyAuthorization.SpotifyToken spotifyToken = JsonConvert.DeserializeObject<SpotifyWebAPIWrapper.SpotifyAuthorization.SpotifyToken> (token);
-            _spotifyEndpointAccessor.SetAuthorizationToken (spotifyToken);
+            _spotifyEndpointAccessor.SetAuthorizationToken (spotifyToken, HttpContext);
 
             SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyUser selectedUser = _spotifyEndpointAccessor.GetUserProfile (userId);
             if (selectedUser == null)
@@ -75,7 +75,7 @@ namespace MaiXIFY.Controllers
                 return Json (new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError (400, "Please add a Spotify username/playlist id!"));
 
             SpotifyWebAPIWrapper.SpotifyAuthorization.SpotifyToken spotifyToken = JsonConvert.DeserializeObject<SpotifyWebAPIWrapper.SpotifyAuthorization.SpotifyToken> (token);
-            _spotifyEndpointAccessor.SetAuthorizationToken (spotifyToken);
+            _spotifyEndpointAccessor.SetAuthorizationToken (spotifyToken, HttpContext);
 
             SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist playlist = _spotifyEndpointAccessor.GetPlaylist (userId, playlistId);
             
@@ -96,7 +96,7 @@ namespace MaiXIFY.Controllers
             }
 
             SpotifyWebAPIWrapper.SpotifyAuthorization.SpotifyToken spotifyToken = JsonConvert.DeserializeObject<SpotifyWebAPIWrapper.SpotifyAuthorization.SpotifyToken> (token);
-            _spotifyEndpointAccessor.SetAuthorizationToken (spotifyToken);
+            _spotifyEndpointAccessor.SetAuthorizationToken (spotifyToken, HttpContext);
 
             List<SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist> selectedPlaylistsObject = _spotifyEndpointAccessor.GetPlaylists (selectedPlaylists);
 
@@ -131,7 +131,7 @@ namespace MaiXIFY.Controllers
                 return Json (new SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyError (400, "Spotify token required!"));
 
             SpotifyWebAPIWrapper.SpotifyAuthorization.SpotifyToken spotifyToken = JsonConvert.DeserializeObject<SpotifyWebAPIWrapper.SpotifyAuthorization.SpotifyToken> (token);
-            _spotifyEndpointAccessor.SetAuthorizationToken (spotifyToken);
+            _spotifyEndpointAccessor.SetAuthorizationToken (spotifyToken, HttpContext);
 
             SpotifyWebAPIWrapper.SpotifyObjectModel.SpotifyPlaylist generatedPlaylist = _spotifyEndpointAccessor.GetPlaylist (userId, playlistId);
 
